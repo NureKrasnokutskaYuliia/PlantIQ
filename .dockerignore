@@ -1,0 +1,7 @@
+**/.git
+**/bin
+**/obj
+out
+Dockerfile
+.dockerignore
+/Новий текстовий документ.json
