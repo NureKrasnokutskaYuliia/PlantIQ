@@ -1,0 +1,2406 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "PlantIQ API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Admin/stats": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Get system-wide statistics.",
+        "description": "Returns aggregated data about users, devices, plants, and alerts.",
+        "responses": {
+          "200": {
+            "description": "Successfully returned statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemStatsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Admin/users/{userId}/ban": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Ban a user.",
+        "description": "Deactivates a user account (IsActive = false). The user will not be able to login.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The ID of the user to ban",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User successfully banned"
+          }
+        }
+      }
+    },
+    "/api/Admin/users/{userId}/unban": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Unban a user.",
+        "description": "Reactivates a user account (IsActive = true).",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The ID of the user to unban",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User successfully unbanned"
+          }
+        }
+      }
+    },
+    "/api/Admin/notifications/global": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Send a global notification to ALL users.",
+        "description": "Creates a system notification for every active user in the database.\r\nUseful for maintenance announcements or critical system alerts.",
+        "requestBody": {
+          "description": "The notification details",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GlobalNotificationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GlobalNotificationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GlobalNotificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Notifications queued/sent"
+          },
+          "400": {
+            "description": "Invalid priority or message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Devices": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Get a list of all devices.",
+        "description": "Returns all devices and includes associated User data.",
+        "responses": {
+          "200": {
+            "description": "Successfully returned the list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Device"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Create a new device.",
+        "description": "Adds a new device to the database.",
+        "requestBody": {
+          "description": "The new device data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Device"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Device"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Device"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Device successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Devices/{id}": {
+      "get": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Get a specific device by ID.",
+        "description": "Returns a device and includes its associated Plants data.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique device identifier",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Device found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Device"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Device with this ID does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Update an existing device.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the device to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The updated device data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Device"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Device"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Device"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful update (no content)"
+          },
+          "400": {
+            "description": "The ID in the URL does not match the ID in the body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Device not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Devices"
+        ],
+        "summary": "Delete a device.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the device to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful deletion"
+          },
+          "404": {
+            "description": "Device not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DeviceSyncLogs/Device/{deviceId}": {
+      "get": {
+        "tags": [
+          "DeviceSyncLogs"
+        ],
+        "summary": "Retrieve synchronization logs for a specific device.",
+        "description": "Returns a history of synchronization attempts for the device, ordered by start time (newest first).",
+        "parameters": [
+          {
+            "name": "deviceId",
+            "in": "path",
+            "description": "The ID of the device",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of logs to return (default is 20)",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned the logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceSyncLog"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DeviceSyncLogs/start": {
+      "post": {
+        "tags": [
+          "DeviceSyncLogs"
+        ],
+        "summary": "Start a new synchronization session log.",
+        "description": "Creates a log entry with status 'InProgress' and current timestamp.",
+        "requestBody": {
+          "description": "The ID of the device starting sync",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Log started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceSyncLog"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/DeviceSyncLogs/{id}/complete": {
+      "post": {
+        "tags": [
+          "DeviceSyncLogs"
+        ],
+        "summary": "Complete an existing synchronization session.",
+        "description": "Updates the log with end time, status, and record count.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The SyncId returned from StartSync",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Number of records transferred",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Log updated successfully"
+          }
+        }
+      }
+    },
+    "/api/Notifications/User/{userId}": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Get notifications for a specific user.",
+        "description": "Retrieves a list of notifications for the specified user, optionally filtering for unread ones only.\r\nResults are ordered by timestamp (newest first).",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The ID of the user",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "unreadOnly",
+            "in": "query",
+            "description": "If true, returns only unread notifications. If false (default), returns all.",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned the list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Notification"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Notifications/User/{userId}/count": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Get the count of unread notifications for a user.",
+        "description": "Useful for displaying badges on the UI (e.g., \"You have 3 new messages\").",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The ID of the user",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned the count",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Notifications/{id}/read": {
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Mark a notification as read.",
+        "description": "Updates the status of a notification to \"Read\" and sets the read timestamp.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the notification",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully marked as read (no content)"
+          },
+          "404": {
+            "description": "Notification not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Notifications/User/{userId}/read-all": {
+      "put": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Mark ALL notifications as read for a specific user.",
+        "description": "A convenient method to clear all \"unread\" badges for a user at once.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The ID of the user",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successfully processed"
+          }
+        }
+      }
+    },
+    "/api/Notifications": {
+      "post": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Create a new notification.",
+        "description": "Adds a new notification to the system (usually called internally by other services, but exposed here for testing/admin).",
+        "requestBody": {
+          "description": "The notification data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Notification"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Notification"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Notification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Notification successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Notification"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Plants": {
+      "get": {
+        "tags": [
+          "Plants"
+        ],
+        "summary": "Get a list of all plants.",
+        "description": "Returns all plants available in the database.",
+        "responses": {
+          "200": {
+            "description": "Successfully returned the list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plant"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Plants"
+        ],
+        "summary": "Create a new plant.",
+        "description": "Adds a new plant to the database.",
+        "requestBody": {
+          "description": "The new plant data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plant"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plant"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plant"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Plant successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plant"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Plants/{id}": {
+      "get": {
+        "tags": [
+          "Plants"
+        ],
+        "summary": "Get a specific plant by ID.",
+        "description": "Returns a plant and includes its associated WateringSchedules.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique plant identifier",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Plant found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Plant"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Plant with this ID does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Plants"
+        ],
+        "summary": "Update an existing plant.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the plant to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The updated plant data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plant"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plant"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Plant"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful update (no content)"
+          },
+          "400": {
+            "description": "The ID in the URL does not match the ID in the body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Plant not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Plants"
+        ],
+        "summary": "Delete a plant.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the plant to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful deletion"
+          },
+          "404": {
+            "description": "Plant not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Plants/User/{userId}": {
+      "get": {
+        "tags": [
+          "Plants"
+        ],
+        "summary": "Get all plants belonging to a specific user.",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The ID of the user",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned the list (can be empty)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Plant"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SensorData/Plant/{plantId}": {
+      "get": {
+        "tags": [
+          "SensorData"
+        ],
+        "summary": "Retrieve sensor data for a specific plant.",
+        "description": "Returns a list of sensor readings for the specified plant ID. \r\nResults are ordered by timestamp (newest first).",
+        "parameters": [
+          {
+            "name": "plantId",
+            "in": "path",
+            "description": "The ID of the plant to retrieve data for",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "The maximum number of records to return (default is 100)",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned the data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SensorData"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SensorData": {
+      "post": {
+        "tags": [
+          "SensorData"
+        ],
+        "summary": "Upload new sensor data.",
+        "description": "Accepts a new sensor reading object (e.g., from an IoT device).\r\n\r\n<strong>Business Logic:</strong> This method automatically checks if the sensor values (e.g., moisture) \r\ndeviate from the plant's optimal range. If they do, a Notification is automatically generated.",
+        "requestBody": {
+          "description": "The sensor data object containing moisture, light, etc.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorData"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorData"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SensorData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Data successfully recorded (and alerts checked)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorData"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SystemSettings": {
+      "get": {
+        "tags": [
+          "SystemSettings"
+        ],
+        "summary": "Get all system settings.",
+        "description": "Returns a list of global configuration key-value pairs.",
+        "responses": {
+          "200": {
+            "description": "Successfully returned the settings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SystemSetting"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/SystemSettings/{key}": {
+      "get": {
+        "tags": [
+          "SystemSettings"
+        ],
+        "summary": "Get a specific system setting value by its key.",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The unique key of the setting (e.g., \"MaxUploadSize\")",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Setting found, returns the value",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Setting with this key does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "SystemSettings"
+        ],
+        "summary": "Update or create a system setting.",
+        "description": "Updates the value of a specific setting identified by its key. The service automatically updates the 'UpdatedAt' timestamp.",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "description": "The unique key of the setting to update",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The object containing the new value and updater information",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemSetting"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemSetting"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemSetting"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful update (no content)"
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a list of all users.",
+        "description": "Returns an array of all users available in the database.",
+        "responses": {
+          "200": {
+            "description": "Successfully returned the list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create (Register) a new user.",
+        "description": "Accepts a user object and a password. The service handles password hashing before saving.",
+        "parameters": [
+          {
+            "name": "password",
+            "in": "query",
+            "description": "The raw password to be hashed",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The new user data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a specific user by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique user identifier",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User with this ID does not exist",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update an existing user.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the user to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The updated user data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful update (no content)"
+          },
+          "400": {
+            "description": "The ID in the URL does not match the ID in the body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the user to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful deletion"
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Users/login": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Authenticate a user (Login) and return JWT Token.",
+        "description": "Verifies credentials. Returns the user object AND a Bearer Token for authorization.",
+        "requestBody": {
+          "description": "Login credentials (email, password)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful, token returned",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/WateringEvents/Plant/{plantId}": {
+      "get": {
+        "tags": [
+          "WateringEvents"
+        ],
+        "summary": "Get the watering history for a specific plant.",
+        "description": "Returns a list of past watering events (execution logs), ordered by timestamp (newest first).",
+        "parameters": [
+          {
+            "name": "plantId",
+            "in": "path",
+            "description": "The ID of the plant",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned the history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WateringEvent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/WateringEvents": {
+      "post": {
+        "tags": [
+          "WateringEvents"
+        ],
+        "summary": "Record a new watering event.",
+        "description": "Logs that a watering action took place (successfully or not).",
+        "requestBody": {
+          "description": "The event data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WateringEvent"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WateringEvent"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WateringEvent"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Event successfully recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WateringEvent"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/WateringSchedules/Plant/{plantId}": {
+      "get": {
+        "tags": [
+          "WateringSchedules"
+        ],
+        "summary": "Get all watering schedules for a specific plant.",
+        "description": "Returns a list of configuration settings (frequency, amount) for watering a specific plant.",
+        "parameters": [
+          {
+            "name": "plantId",
+            "in": "path",
+            "description": "The ID of the plant",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully returned the list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WateringSchedule"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/WateringSchedules/{id}": {
+      "get": {
+        "tags": [
+          "WateringSchedules"
+        ],
+        "summary": "Get a specific watering schedule by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique schedule identifier",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WateringSchedule"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Schedule not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "WateringSchedules"
+        ],
+        "summary": "Update an existing watering schedule.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the schedule to update",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The updated schedule data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WateringSchedule"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WateringSchedule"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WateringSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Successful update (no content)"
+          },
+          "400": {
+            "description": "The ID in the URL does not match the ID in the body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Schedule not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "WateringSchedules"
+        ],
+        "summary": "Delete a watering schedule.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the schedule to delete",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful deletion"
+          },
+          "404": {
+            "description": "Schedule not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/WateringSchedules": {
+      "post": {
+        "tags": [
+          "WateringSchedules"
+        ],
+        "summary": "Create a new watering schedule.",
+        "description": "Adds a new configuration for automatic or manual watering.",
+        "requestBody": {
+          "description": "The schedule data",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WateringSchedule"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WateringSchedule"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WateringSchedule"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Schedule successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WateringSchedule"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Device": {
+        "required": [
+          "name",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "model": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/DeviceStatus"
+          },
+          "firmwareVersion": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "lastSync": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "serialNumber": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "plants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Plant"
+            },
+            "nullable": true
+          },
+          "sensorReadings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SensorData"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeviceStatus": {
+        "enum": [
+          "Online",
+          "Offline",
+          "Error",
+          "Maintenance"
+        ],
+        "type": "string"
+      },
+      "DeviceSyncLog": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "syncId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deviceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "device": {
+            "$ref": "#/components/schemas/Device"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/SyncStatus"
+          },
+          "recordsSynced": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "syncType": {
+            "$ref": "#/components/schemas/SyncType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GlobalNotificationRequest": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "priority": {
+            "type": "string",
+            "description": "Priority level: Low, Normal, High, Critical",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LoginResponse": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Notification": {
+        "required": [
+          "message",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "notificationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "plantId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "plant": {
+            "$ref": "#/components/schemas/Plant"
+          },
+          "deviceId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "device": {
+            "$ref": "#/components/schemas/Device"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "$ref": "#/components/schemas/NotificationType"
+          },
+          "message": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "read": {
+            "type": "boolean"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/NotificationPriority"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotificationPriority": {
+        "enum": [
+          "Low",
+          "Normal",
+          "High",
+          "Critical"
+        ],
+        "type": "string"
+      },
+      "NotificationType": {
+        "enum": [
+          "LowMoisture",
+          "LowLight",
+          "HighLight",
+          "DeviceOffline",
+          "WateringComplete",
+          "WateringFailed",
+          "BatteryLow",
+          "System"
+        ],
+        "type": "string"
+      },
+      "Plant": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "plantId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "deviceId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "device": {
+            "$ref": "#/components/schemas/Device"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "species": {
+            "maxLength": 100,
+            "type": "string",
+            "nullable": true
+          },
+          "optimalMoistureMin": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "optimalMoistureMax": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "optimalLightMin": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "optimalLightMax": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "wateringSchedules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WateringSchedule"
+            },
+            "nullable": true
+          },
+          "wateringEvents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WateringEvent"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "SensorData": {
+        "type": "object",
+        "properties": {
+          "dataId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plantId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plant": {
+            "$ref": "#/components/schemas/Plant"
+          },
+          "deviceId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "device": {
+            "$ref": "#/components/schemas/Device"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "soilMoisture": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "lightIntensity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "batteryLevel": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SyncStatus": {
+        "enum": [
+          "InProgress",
+          "Completed",
+          "Failed",
+          "Partial"
+        ],
+        "type": "string"
+      },
+      "SyncType": {
+        "enum": [
+          "Automatic",
+          "Manual",
+          "Forced"
+        ],
+        "type": "string"
+      },
+      "SystemSetting": {
+        "required": [
+          "settingKey"
+        ],
+        "type": "object",
+        "properties": {
+          "settingId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "settingKey": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "settingValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "updatedBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SystemStatsDto": {
+        "type": "object",
+        "properties": {
+          "totalUsers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeDevices": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPlants": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "criticalAlertsLast24h": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "databaseSizeMb": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "User": {
+        "required": [
+          "email",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "maxLength": 100,
+            "minLength": 1,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 255,
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRole"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "lastLogin": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "devices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Device"
+            },
+            "nullable": true
+          },
+          "plants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Plant"
+            },
+            "nullable": true
+          },
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notification"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserRole": {
+        "enum": [
+          "Owner",
+          "Admin"
+        ],
+        "type": "string"
+      },
+      "WateringEvent": {
+        "required": [
+          "mode"
+        ],
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plantId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plant": {
+            "$ref": "#/components/schemas/Plant"
+          },
+          "scheduleId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/WateringSchedule"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "amountMl": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mode": {
+            "$ref": "#/components/schemas/WateringMode"
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/WateringStatus"
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WateringMode": {
+        "enum": [
+          "Automatic",
+          "Manual",
+          "Scheduled"
+        ],
+        "type": "string"
+      },
+      "WateringSchedule": {
+        "required": [
+          "startTime"
+        ],
+        "type": "object",
+        "properties": {
+          "scheduleId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plantId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plant": {
+            "$ref": "#/components/schemas/Plant"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "intervalHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amountMl": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "daysOfWeek": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WateringStatus": {
+        "enum": [
+          "Completed",
+          "Failed",
+          "Cancelled"
+        ],
+        "type": "string"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Please enter a valid token",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}

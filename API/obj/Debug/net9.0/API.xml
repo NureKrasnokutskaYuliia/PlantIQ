@@ -1,0 +1,330 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>API</name>
+    </assembly>
+    <members>
+        <member name="M:API.Controllers.AdminController.GetStats">
+            <summary>
+            Get system-wide statistics.
+            </summary>
+            <remarks>
+            Returns aggregated data about users, devices, plants, and alerts.
+            </remarks>
+            <returns>System statistics DTO</returns>
+            <response code="200">Successfully returned statistics</response>
+        </member>
+        <member name="M:API.Controllers.AdminController.BanUser(System.Int32)">
+            <summary>
+            Ban a user.
+            </summary>
+            <remarks>
+            Deactivates a user account (IsActive = false). The user will not be able to login.
+            </remarks>
+            <param name="userId">The ID of the user to ban</param>
+            <response code="204">User successfully banned</response>
+        </member>
+        <member name="M:API.Controllers.AdminController.UnbanUser(System.Int32)">
+            <summary>
+            Unban a user.
+            </summary>
+            <remarks>
+            Reactivates a user account (IsActive = true).
+            </remarks>
+            <param name="userId">The ID of the user to unban</param>
+            <response code="204">User successfully unbanned</response>
+        </member>
+        <member name="M:API.Controllers.AdminController.SendGlobalNotification(API.Controllers.GlobalNotificationRequest)">
+            <summary>
+            Send a global notification to ALL users.
+            </summary>
+            <remarks>
+            Creates a system notification for every active user in the database.
+            Useful for maintenance announcements or critical system alerts.
+            </remarks>
+            <param name="request">The notification details</param>
+            <response code="204">Notifications queued/sent</response>
+            <response code="400">Invalid priority or message</response>
+        </member>
+        <member name="P:API.Controllers.GlobalNotificationRequest.Priority">
+            <summary>
+            Priority level: Low, Normal, High, Critical
+            </summary>
+        </member>
+        <member name="M:API.Controllers.DevicesController.GetDevices">
+            <summary>
+            Get a list of all devices.
+            </summary>
+            <returns>A list of devices</returns>
+            <response code="200">Successfully returned the list</response>
+        </member>
+        <member name="M:API.Controllers.DevicesController.GetDevice(System.Int32)">
+            <summary>
+            Get a specific device by ID.
+            </summary>
+            <param name="id">Unique device identifier</param>
+            <returns>The device object</returns>
+            <response code="200">Device found</response>
+            <response code="404">Device with this ID does not exist</response>
+        </member>
+        <member name="M:API.Controllers.DevicesController.PostDevice(API.DTOs.CreateDeviceDto)">
+            <summary>
+            Create a new device.
+            </summary>
+            <remarks>
+            Adds a new device to the database. UserId is extracted from JWT token.
+            </remarks>
+            <param name="dto">The new device data</param>
+            <returns>The created device object</returns>
+            <response code="201">Device successfully created</response>
+            <response code="400">Invalid input data</response>
+            <response code="401">User not authenticated</response>
+        </member>
+        <member name="M:API.Controllers.DevicesController.PutDevice(System.Int32,API.DTOs.UpdateDeviceDto)">
+            <summary>
+            Update an existing device.
+            </summary>
+            <param name="id">The ID of the device to update</param>
+            <param name="dto">The updated device data</param>
+            <response code="204">Successful update (no content)</response>
+            <response code="404">Device not found</response>
+        </member>
+        <member name="M:API.Controllers.DevicesController.DeleteDevice(System.Int32)">
+            <summary>
+            Delete a device.
+            </summary>
+            <param name="id">The ID of the device to delete</param>
+            <response code="204">Successful deletion</response>
+            <response code="404">Device not found</response>
+        </member>
+        <member name="M:API.Controllers.NotificationsController.GetUserNotifications(System.Int32,System.Boolean)">
+            <summary>
+            Get notifications for a specific user.
+            </summary>
+            <param name="userId">The ID of the user</param>
+            <param name="unreadOnly">If true, returns only unread notifications</param>
+            <returns>A list of notifications</returns>
+        </member>
+        <member name="M:API.Controllers.NotificationsController.GetUnreadCount(System.Int32)">
+            <summary>
+            Get the count of unread notifications for a user.
+            </summary>
+            <param name="userId">The ID of the user</param>
+            <returns>Integer count of unread items</returns>
+        </member>
+        <member name="M:API.Controllers.NotificationsController.MarkAsRead(System.Int32)">
+            <summary>
+            Mark a notification as read.
+            </summary>
+            <param name="id">The ID of the notification</param>
+        </member>
+        <member name="M:API.Controllers.NotificationsController.MarkAllAsRead(System.Int32)">
+            <summary>
+            Mark ALL notifications as read for a specific user.
+            </summary>
+            <param name="userId">The ID of the user</param>
+        </member>
+        <member name="M:API.Controllers.NotificationsController.CreateNotification(API.DTOs.CreateNotificationDto)">
+            <summary>
+            Create a new notification.
+            </summary>
+            <param name="dto">The notification data</param>
+            <returns>The created notification object</returns>
+        </member>
+        <member name="M:API.Controllers.PlantsController.GetPlants">
+            <summary>
+            Get a list of all plants (Admin only).
+            </summary>
+            <remarks>
+            Returns all plants available in the database. Restricted to administrators.
+            </remarks>
+            <returns>A list of plants</returns>
+        </member>
+        <member name="M:API.Controllers.PlantsController.GetPlant(System.Int32)">
+            <summary>
+            Get a specific plant by ID.
+            </summary>
+            <param name="id">Unique plant identifier</param>
+            <returns>The plant object</returns>
+        </member>
+        <member name="M:API.Controllers.PlantsController.GetPlantsByUser">
+            <summary>
+            Get all plants belonging to the current user (from JWT).
+            </summary>
+            <returns>A list of plants for the authenticated user</returns>
+        </member>
+        <member name="M:API.Controllers.PlantsController.GetPlantsByDevice(System.Int32)">
+            <summary>
+            Get the plant associated with a specific device.
+            </summary>
+            <param name="deviceId">The ID of the device</param>
+            <returns>The plant linked to the device</returns>
+        </member>
+        <member name="M:API.Controllers.PlantsController.PostPlant(API.DTOs.CreatePlantDto)">
+            <summary>
+            Create a new plant.
+            </summary>
+            <param name="dto">The new plant data</param>
+            <returns>The created plant object</returns>
+        </member>
+        <member name="M:API.Controllers.PlantsController.PutPlant(System.Int32,API.DTOs.UpdatePlantDto)">
+            <summary>
+            Update an existing plant.
+            </summary>
+            <param name="id">The ID of the plant to update</param>
+            <param name="dto">The updated plant data</param>
+        </member>
+        <member name="M:API.Controllers.PlantsController.DeletePlant(System.Int32)">
+            <summary>
+            Delete a plant.
+            </summary>
+            <param name="id">The ID of the plant to delete</param>
+        </member>
+        <member name="M:API.Controllers.SensorDataController.GetSensorDataByPlant(System.Int32,System.Int32)">
+            <summary>
+            Retrieve sensor data for a specific plant.
+            </summary>
+            <param name="plantId">The ID of the plant to retrieve data for</param>
+            <param name="limit">The maximum number of records to return (default is 100)</param>
+            <returns>A list of sensor data entries</returns>
+        </member>
+        <member name="M:API.Controllers.SensorDataController.PostSensorData(API.DTOs.CreateSensorDataDto)">
+            <summary>
+            Upload new sensor data.
+            </summary>
+            <param name="dto">The sensor data object</param>
+            <returns>The created sensor data object</returns>
+        </member>
+        <member name="M:API.Controllers.SystemSettingsController.GetSettings">
+            <summary>
+            Get all system settings.
+            </summary>
+            <remarks>
+            Returns a list of global configuration key-value pairs.
+            </remarks>
+            <returns>A list of system settings</returns>
+            <response code="200">Successfully returned the settings</response>
+        </member>
+        <member name="M:API.Controllers.SystemSettingsController.GetSettingByKey(System.String)">
+            <summary>
+            Get a specific system setting value by its key.
+            </summary>
+            <param name="key">The unique key of the setting (e.g., "MaxUploadSize")</param>
+            <returns>The string value of the setting</returns>
+            <response code="200">Setting found, returns the value</response>
+            <response code="404">Setting with this key does not exist</response>
+        </member>
+        <member name="M:API.Controllers.SystemSettingsController.UpdateSetting(System.String,API.Models.SystemSetting)">
+            <summary>
+            Update or create a system setting.
+            </summary>
+            <remarks>
+            Updates the value of a specific setting identified by its key. The service automatically updates the 'UpdatedAt' timestamp.
+            </remarks>
+            <param name="key">The unique key of the setting to update</param>
+            <param name="settingUpdate">The object containing the new value and updater information</param>
+            <response code="204">Successful update (no content)</response>
+            <response code="400">Invalid input</response>
+        </member>
+        <member name="M:API.Controllers.UsersController.GetUsers">
+            <summary>
+            Get a list of all users.
+            </summary>
+            <returns>A list of users</returns>
+            <response code="200">Successfully returned the list</response>
+        </member>
+        <member name="M:API.Controllers.UsersController.GetUser(System.Int32)">
+            <summary>
+            Get a specific user by ID.
+            </summary>
+            <param name="id">Unique user identifier</param>
+            <returns>The user object</returns>
+            <response code="200">User found</response>
+            <response code="404">User with this ID does not exist</response>
+        </member>
+        <member name="M:API.Controllers.UsersController.PostUser(API.DTOs.CreateUserDto)">
+            <summary>
+            Create (Register) a new user.
+            </summary>
+            <param name="dto">The new user data</param>
+            <returns>The created user object</returns>
+            <response code="201">User successfully created</response>
+            <response code="400">Invalid input data</response>
+        </member>
+        <member name="M:API.Controllers.UsersController.PutUser(System.Int32,API.DTOs.UpdateUserDto)">
+            <summary>
+            Update an existing user.
+            </summary>
+            <param name="id">The ID of the user to update</param>
+            <param name="dto">The updated user data</param>
+            <response code="204">Successful update (no content)</response>
+            <response code="400">The ID in the URL does not match the ID in the body</response>
+            <response code="404">User not found</response>
+        </member>
+        <member name="M:API.Controllers.UsersController.DeleteUser(System.Int32)">
+            <summary>
+            Delete a user.
+            </summary>
+            <param name="id">The ID of the user to delete</param>
+            <response code="204">Successful deletion</response>
+            <response code="404">User not found</response>
+        </member>
+        <member name="M:API.Controllers.UsersController.Login(API.DTOs.LoginRequestDto)">
+            <summary>
+            Authenticate a user (Login) and return JWT Token.
+            </summary>
+            <param name="request">Login credentials (email, password)</param>
+            <returns>JSON containing the Token and User details</returns>
+            <response code="200">Login successful, token returned</response>
+            <response code="401">Invalid email or password</response>
+        </member>
+        <member name="M:API.Controllers.WateringEventsController.GetEventsByPlant(System.Int32)">
+            <summary>
+            Get the watering history for a specific plant.
+            </summary>
+            <param name="plantId">The ID of the plant</param>
+            <returns>A list of watering events</returns>
+        </member>
+        <member name="M:API.Controllers.WateringEventsController.PostEvent(API.DTOs.CreateWateringEventDto)">
+            <summary>
+            Record a new watering event.
+            </summary>
+            <param name="dto">The event data</param>
+            <returns>The recorded event object</returns>
+        </member>
+        <member name="M:API.Controllers.WateringSchedulesController.GetSchedulesByPlant(System.Int32)">
+            <summary>
+            Get all watering schedules for a specific plant.
+            </summary>
+            <param name="plantId">The ID of the plant</param>
+            <returns>A list of watering schedules</returns>
+        </member>
+        <member name="M:API.Controllers.WateringSchedulesController.GetSchedule(System.Int32)">
+            <summary>
+            Get a specific watering schedule by ID.
+            </summary>
+            <param name="id">Unique schedule identifier</param>
+            <returns>The watering schedule object</returns>
+        </member>
+        <member name="M:API.Controllers.WateringSchedulesController.PostSchedule(API.DTOs.CreateWateringScheduleDto)">
+            <summary>
+            Create a new watering schedule.
+            </summary>
+            <param name="dto">The schedule data</param>
+            <returns>The created schedule object</returns>
+        </member>
+        <member name="M:API.Controllers.WateringSchedulesController.PutSchedule(System.Int32,API.DTOs.UpdateWateringScheduleDto)">
+            <summary>
+            Update an existing watering schedule.
+            </summary>
+            <param name="id">The ID of the schedule to update</param>
+            <param name="dto">The updated schedule data</param>
+        </member>
+        <member name="M:API.Controllers.WateringSchedulesController.DeleteSchedule(System.Int32)">
+            <summary>
+            Delete a watering schedule.
+            </summary>
+            <param name="id">The ID of the schedule to delete</param>
+        </member>
+    </members>
+</doc>
