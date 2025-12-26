@@ -46,6 +46,7 @@ namespace API.Controllers
         /// <param name="dto">The sensor data object</param>
         /// <returns>The created sensor data object</returns>
         [HttpPost]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(SensorDataResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<SensorDataResponseDto>> PostSensorData(CreateSensorDataDto dto)

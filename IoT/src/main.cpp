@@ -229,7 +229,7 @@ void setup() {
 }
 
 unsigned long lastSensorUpdate = 0;
-const unsigned long sensorInterval = 600000; 
+const unsigned long sensorInterval = 6000; 
 
 void loop() {
     checkSchedulesLogic();
