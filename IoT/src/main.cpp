@@ -7,14 +7,13 @@
 const char* ssid = WIFI_SSID;
 const char* password = WIFI_PASS;
 const char* baseUrl = API_BASE_URL;
-const char* apiToken = API_TOKEN;
 const int plantId = PLANT_ID;
 const int deviceId = DEVICE_ID;
 
-const int pumpPin = 18;
-const int moisturePin = 34;
-const int lightPin = 35;
-const int batteryPin = 32;
+const int pumpPin = 10;
+const int moisturePin = 0;
+const int lightPin = 1;
+const int batteryPin = 2;
 
 struct SensorReadings {
     double soilMoisture;
@@ -36,11 +35,11 @@ std::vector<Schedule> activeSchedules;
 void log(const char* tag, String message) {
     struct tm timeinfo;
     if (getLocalTime(&timeinfo)) {
-        Serial.printf("[%02d:%02d:%02d] [%s] %s\n", 
+        Serial.printf("[%02d:%02d:%02d] [%s] %s\n\r", 
                       timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec, 
                       tag, message.c_str());
     } else {
-        Serial.printf("[%lu] [%s] %s\n", millis(), tag, message.c_str());
+        Serial.printf("[%lu] [%s] %s\n\r", millis(), tag, message.c_str());
     }
 }
 
@@ -100,7 +99,6 @@ void postWateringEvent(int scheduleId, int amount, String status) {
     HTTPClient http;
     http.begin(String(baseUrl) + "/WateringEvents");
     http.addHeader("Content-Type", "application/json");
-    http.addHeader("Authorization", "Bearer " + String(apiToken));
 
     StaticJsonDocument<256> doc;
     doc["plantId"] = plantId;
@@ -148,8 +146,7 @@ void checkSchedulesLogic() {
                 s.watered = true; 
             }
         } else {
-            s.watered = false; 
-            log("LOGIC", "Resetting 'watered' flag for Schedule ID " + String(s.id));
+            s.watered = false;
         }
     }
 }
@@ -179,7 +176,6 @@ void sendSensorData() {
     log("[API]", "Sending telemetry data...");
     http.begin(String(baseUrl) + "/SensorData");
     http.addHeader("Content-Type", "application/json");
-    http.addHeader("Authorization", "Bearer " + String(apiToken));
 
     StaticJsonDocument<256> doc;
     doc["plantId"] = plantId;         
@@ -204,6 +200,7 @@ void sendSensorData() {
 
 void setup() {
     Serial.begin(115200);
+    while (!Serial) delay(10);
     pinMode(pumpPin, OUTPUT);
     digitalWrite(pumpPin, LOW);
 

@@ -101,6 +101,7 @@ namespace API.Controllers
                         Timestamp = DateTime.UtcNow
                     });
                 }
+
                 if (plant.OptimalLightMin.HasValue && dto.LightIntensity < plant.OptimalLightMin.Value)
                 {
                     await _notificationService.CreateNotificationAsync(new Notification

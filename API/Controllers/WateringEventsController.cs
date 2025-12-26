@@ -43,6 +43,7 @@ namespace API.Controllers
         /// <param name="dto">The event data</param>
         /// <returns>The recorded event object</returns>
         [HttpPost]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(WateringEventResponseDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<WateringEventResponseDto>> PostEvent(CreateWateringEventDto dto)

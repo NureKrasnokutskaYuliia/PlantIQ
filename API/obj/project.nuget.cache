@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "aGG2BDAE5YI=",
+  "dgSpecHash": "yb5D+TCXP8k=",
   "success": true,
-  "projectFilePath": "C:\\Users\\pencelheimer\\Desktop\\PlantIQ\\API\\API.csproj",
+  "projectFilePath": "C:\\Users\\pencelheimer\\Desktop\\АтаРК\\PlantIQ\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\pencelheimer\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
     "C:\\Users\\pencelheimer\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\9.0.11\\microsoft.aspnetcore.authentication.jwtbearer.9.0.11.nupkg.sha512",

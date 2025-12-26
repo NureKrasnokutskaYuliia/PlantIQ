@@ -1527,11 +1527,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\pencelheimer\\Desktop\\PlantIQ\\API\\API.csproj",
+      "projectUniqueName": "C:\\Users\\pencelheimer\\Desktop\\АтаРК\\PlantIQ\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Users\\pencelheimer\\Desktop\\PlantIQ\\API\\API.csproj",
+      "projectPath": "C:\\Users\\pencelheimer\\Desktop\\АтаРК\\PlantIQ\\API\\API.csproj",
       "packagesPath": "C:\\Users\\pencelheimer\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\pencelheimer\\Desktop\\PlantIQ\\API\\obj\\",
+      "outputPath": "C:\\Users\\pencelheimer\\Desktop\\АтаРК\\PlantIQ\\API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\pencelheimer\\AppData\\Roaming\\NuGet\\NuGet.Config"
