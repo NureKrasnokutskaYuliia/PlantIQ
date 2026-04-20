@@ -29,6 +29,29 @@ namespace API
 
             builder.Services.AddScoped<ISystemSettingsService, SystemSettingsService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
+            builder.Services.AddScoped<IFirebaseService, FirebaseService>();
+
+            // Initialize Firebase
+            var firebaseKeyPath = Path.Combine(builder.Environment.ContentRootPath, "firebase-server-key.json");
+            if (File.Exists(firebaseKeyPath))
+            {
+                try
+                {
+                    FirebaseAdmin.FirebaseApp.Create(new FirebaseAdmin.AppOptions()
+                    {
+                        Credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(firebaseKeyPath)
+                    });
+                    Console.WriteLine("Firebase: Successfully initialized.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Firebase Error: {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Firebase WARNING: firebase-server-key.json NOT FOUND. Push notifications will be disabled.");
+            }
 
             var jwtSettings = builder.Configuration.GetSection("Jwt");
             var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]!);
@@ -107,6 +130,24 @@ namespace API
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<AppDbContext>();
+                    if (context.Database.GetPendingMigrations().Any())
+                    {
+                        context.Database.Migrate();
+                        Console.WriteLine("Database: Migrations applied successfully.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Database Error: {ex.Message}");
+                }
+            }
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseHttpsRedirection();
@@ -122,7 +163,24 @@ namespace API
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.MapGet("/", () => Results.Redirect("/swagger"));
+
             app.MapControllers();
+
+            using (var scope = app.Services.CreateScope())
+                {
+                    var services = scope.ServiceProvider;
+                    try
+                    {
+                        var context = services.GetRequiredService<AppDbContext>();
+                        context.Database.Migrate(); 
+                        Console.WriteLine("Migrations applied successfully to Neon!");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Migration error: {ex.Message}");
+                    }
+                }
 
             app.Run();
         }

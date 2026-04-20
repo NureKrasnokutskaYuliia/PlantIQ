@@ -42,6 +42,9 @@ namespace API.Models
         [Column("last_login")]
         public DateTime? LastLogin { get; set; } = DateTime.UtcNow;
 
+        [Column("fcm_token")]
+        public string? FcmToken { get; set; }
+
         [JsonIgnore]
         public ICollection<Device> Devices { get; set; } = new List<Device>();
         [JsonIgnore]

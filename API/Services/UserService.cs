@@ -1,4 +1,4 @@
-﻿using API.Data;
+using API.Data;
 using API.Models;
 using API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -95,6 +95,17 @@ namespace API.Services
 
             _context.Entry(user).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateFcmTokenAsync(int userId, string token)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user != null)
+            {
+                user.FcmToken = token;
+                user.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task DeleteUserAsync(int id)

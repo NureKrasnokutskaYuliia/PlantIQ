@@ -142,7 +142,8 @@ namespace API.Controllers
                 OptimalMoistureMax = dto.OptimalMoistureMax,
                 OptimalLightMin = dto.OptimalLightMin,
                 OptimalLightMax = dto.OptimalLightMax,
-                Notes = dto.Notes
+                Notes = dto.Notes,
+                WateringMode = dto.WateringMode
             };
 
             var createdPlant = await _plantService.AddPlantAsync(plant);
@@ -190,6 +191,7 @@ namespace API.Controllers
             existingPlant.OptimalLightMax = dto.OptimalLightMax;
             existingPlant.Notes = dto.Notes;
             existingPlant.IsActive = dto.IsActive;
+            existingPlant.WateringMode = dto.WateringMode;
             existingPlant.UpdatedAt = DateTime.UtcNow;
 
             await _plantService.UpdatePlantAsync(existingPlant);
@@ -247,7 +249,8 @@ namespace API.Controllers
                 Notes = plant.Notes,
                 CreatedAt = plant.CreatedAt,
                 UpdatedAt = plant.UpdatedAt,
-                IsActive = plant.IsActive
+                IsActive = plant.IsActive,
+                WateringMode = plant.WateringMode
             };
         }
     }

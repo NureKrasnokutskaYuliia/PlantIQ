@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -57,6 +57,9 @@ namespace API.Models
 
         [Column("is_active")]
         public bool IsActive { get; set; } = true;
+
+        [Column("watering_mode")]
+        public WateringMode WateringMode { get; set; } = WateringMode.Manual;
 
         [JsonIgnore]
         public ICollection<WateringSchedule> WateringSchedules { get; set; } = new List<WateringSchedule>();

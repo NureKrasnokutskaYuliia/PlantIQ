@@ -1,4 +1,4 @@
-﻿using API.Models;
+using API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -14,6 +14,7 @@ namespace API.Data
         public DbSet<WateringEvent> WateringEvents { get; set; } = null!;
         public DbSet<Notification> Notifications { get; set; } = null!;
 
+        public DbSet<PlantSpecies> PlantSpecies { get; set; } = null!;
         public DbSet<SystemSetting> SystemSettings { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -46,18 +47,25 @@ namespace API.Data
             modelBuilder.Entity<Device>().Property(d => d.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
             modelBuilder.Entity<Device>().HasIndex(d => d.SerialNumber).IsUnique();
 
+            modelBuilder.Entity<Plant>()
+                .Property(p => p.WateringMode)
+                .HasDefaultValue(WateringMode.Manual)
+                .HasConversion(
+                    v => v.ToString(),
+                    v => (WateringMode)Enum.Parse(typeof(WateringMode), v, true));
+
             modelBuilder.Entity<WateringEvent>()
                 .Property(e => e.Mode)
                 .HasDefaultValue(WateringMode.Automatic)
                 .HasConversion(
-                    v => v.ToString().ToLower(),
+                    v => v.ToString(),
                     v => (WateringMode)Enum.Parse(typeof(WateringMode), v, true));
 
             modelBuilder.Entity<WateringEvent>()
                 .Property(e => e.Status)
                 .HasDefaultValue(WateringStatus.Completed)
                 .HasConversion(
-                    v => v.ToString().ToLower(),
+                    v => v.ToString(),
                     v => (WateringStatus)Enum.Parse(typeof(WateringStatus), v, true));
 
             modelBuilder.Entity<WateringEvent>().Property(we => we.Timestamp).HasDefaultValueSql("CURRENT_TIMESTAMP");
@@ -65,7 +73,7 @@ namespace API.Data
             modelBuilder.Entity<Notification>()
                 .Property(n => n.Type)
                 .HasConversion(notificationTypeConverter);
-
+            
             modelBuilder.Entity<Notification>()
                 .Property(n => n.Priority)
                 .HasDefaultValue(NotificationPriority.Normal)
@@ -86,6 +94,7 @@ namespace API.Data
 
             modelBuilder.Entity<SystemSetting>().HasIndex(s => s.SettingKey).IsUnique();
             modelBuilder.Entity<SystemSetting>().Property(s => s.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            modelBuilder.Entity<PlantSpecies>().Property(ps => ps.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
             modelBuilder.Entity<Device>().HasOne(d => d.User).WithMany(u => u.Devices).HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Plant>().HasOne(p => p.User).WithMany(u => u.Plants).HasForeignKey(p => p.UserId).OnDelete(DeleteBehavior.Cascade);
@@ -100,6 +109,23 @@ namespace API.Data
             modelBuilder.Entity<Notification>().HasOne(n => n.Device).WithMany().HasForeignKey(n => n.DeviceId).OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<SystemSetting>().HasOne(ss => ss.User).WithMany().HasForeignKey(ss => ss.UpdatedBy).OnDelete(DeleteBehavior.SetNull);
+
+            // Seeding Plant Species with static date
+            var seedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            modelBuilder.Entity<PlantSpecies>().HasData(
+                new PlantSpecies { SpeciesId = 1, Name = "Алое Вера", DefaultMoistureMin = 15, DefaultMoistureMax = 40, DefaultLightMin = 60, DefaultLightMax = 100, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 2, Name = "Сансев'єрія (Тещин язик)", DefaultMoistureMin = 10, DefaultMoistureMax = 30, DefaultLightMin = 20, DefaultLightMax = 80, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 3, Name = "Фікус Бенджаміна", DefaultMoistureMin = 40, DefaultMoistureMax = 70, DefaultLightMin = 50, DefaultLightMax = 90, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 4, Name = "Монстера Деліціоза", DefaultMoistureMin = 50, DefaultMoistureMax = 80, DefaultLightMin = 40, DefaultLightMax = 70, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 5, Name = "Спатифілум (Жіноче щастя)", DefaultMoistureMin = 60, DefaultMoistureMax = 90, DefaultLightMin = 30, DefaultLightMax = 60, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 6, Name = "Заміокулькас", DefaultMoistureMin = 15, DefaultMoistureMax = 35, DefaultLightMin = 20, DefaultLightMax = 70, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 7, Name = "Орхідея Фаленопсис", DefaultMoistureMin = 30, DefaultMoistureMax = 60, DefaultLightMin = 40, DefaultLightMax = 75, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 8, Name = "Кактус (різні види)", DefaultMoistureMin = 5, DefaultMoistureMax = 20, DefaultLightMin = 70, DefaultLightMax = 100, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 9, Name = "Драцена", DefaultMoistureMin = 30, DefaultMoistureMax = 60, DefaultLightMin = 30, DefaultLightMax = 80, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 10, Name = "Хлорофітум", DefaultMoistureMin = 40, DefaultMoistureMax = 80, DefaultLightMin = 30, DefaultLightMax = 90, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 11, Name = "Сукуленти (Ехерверія)", DefaultMoistureMin = 10, DefaultMoistureMax = 30, DefaultLightMin = 60, DefaultLightMax = 100, CreatedAt = seedDate },
+                new PlantSpecies { SpeciesId = 12, Name = "Бегонія", DefaultMoistureMin = 50, DefaultMoistureMax = 85, DefaultLightMin = 40, DefaultLightMax = 70, CreatedAt = seedDate }
+            );
         }
         private static string NotificationTypeToString(NotificationType type)
         {

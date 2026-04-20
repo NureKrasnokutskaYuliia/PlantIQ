@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -33,6 +33,9 @@ namespace API.Models
 
         [Column("days_of_week")]
         public int[] DaysOfWeek { get; set; } = Array.Empty<int>();
+
+        [Column("repeat_count")]
+        public int RepeatCount { get; set; } = 1;
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

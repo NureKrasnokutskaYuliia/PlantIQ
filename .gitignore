@@ -1,5 +1,34 @@
-/Новий текстовий документ.json
+# IDEs and Editors
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+# Build artifacts
+**/bin/
+**/obj/
+out/
+
+# Secrets and Sensitive Data
+/API/firebase-server-key.json
+/API/appsettings.Development.json
+/API/appsettings.json
+*.pfx
+*.p12
+*.pem
+*.key
+
+# Databases
+*.db
+*.sqlite
+*.mdf
+*.ldf
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Project specific
 **/.git
-API/bin
-API/obj
-out

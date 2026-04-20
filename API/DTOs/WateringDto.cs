@@ -13,6 +13,7 @@ namespace API.DTOs
         public int AmountMl { get; set; }
         public bool Enabled { get; set; }
         public int[] DaysOfWeek { get; set; } = Array.Empty<int>();
+        public int RepeatCount { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
     }
@@ -29,6 +30,7 @@ namespace API.DTOs
         public int AmountMl { get; set; }
         public bool Enabled { get; set; } = true;
         public int[] DaysOfWeek { get; set; } = Array.Empty<int>();
+        public int RepeatCount { get; set; } = 1;
     }
 
     public class UpdateWateringScheduleDto
@@ -40,6 +42,7 @@ namespace API.DTOs
         public int AmountMl { get; set; }
         public bool Enabled { get; set; }
         public int[] DaysOfWeek { get; set; } = Array.Empty<int>();
+        public int RepeatCount { get; set; } = 1;
     }
 
     // Watering Events

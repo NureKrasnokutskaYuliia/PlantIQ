@@ -1,4 +1,4 @@
-﻿using API.Models;
+using API.Models;
 
 namespace API.Services.Interfaces
 {
@@ -11,6 +11,7 @@ namespace API.Services.Interfaces
         Task<User?> AuthenticateAsync(string email, string password);
         string GenerateJwtToken(User user);
         Task UpdateUserAsync(User user);
+        Task UpdateFcmTokenAsync(int userId, string token);
         Task DeleteUserAsync(int id);
         Task<bool> UserExistsAsync(int id);
     }

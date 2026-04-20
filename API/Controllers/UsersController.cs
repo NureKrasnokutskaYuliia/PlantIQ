@@ -1,4 +1,4 @@
-﻿using API.DTOs;
+using API.DTOs;
 using API.Models;
 using API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -91,14 +91,12 @@ namespace API.Controllers
         /// <response code="204">Successful update (no content)</response>
         /// <response code="400">The ID in the URL does not match the ID in the body</response>
         /// <response code="404">User not found</response>
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> PutUser(int id, UpdateUserDto dto)
         {
-            // Note: In a real app, we should probably check if the current user has permission to update this user
-
             var existingUser = await _userService.GetByIdAsync(id);
             if (existingUser == null) return NotFound();
 
@@ -159,6 +157,24 @@ namespace API.Controllers
                 Token = tokenString,
                 User = MapToResponseDto(user)
             });
+        }
+
+        /// <summary>
+        /// Update the current user's device token for FCM.
+        /// </summary>
+        [HttpPut("UpdateDeviceToken")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<IActionResult> UpdateDeviceToken([FromBody] UpdateDeviceTokenDto dto)
+        {
+            var userIdStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId))
+            {
+                return Unauthorized();
+            }
+
+            await _userService.UpdateFcmTokenAsync(userId, dto.Token);
+            return NoContent();
         }
 
         private static UserResponseDto MapToResponseDto(User user)

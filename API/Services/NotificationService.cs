@@ -1,4 +1,4 @@
-﻿using API.Data;
+using API.Data;
 using API.Models;
 using API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +8,12 @@ namespace API.Services
     public class NotificationService : INotificationService
     {
         private readonly AppDbContext _context;
+        private readonly IFirebaseService _firebaseService;
 
-        public NotificationService(AppDbContext context)
+        public NotificationService(AppDbContext context, IFirebaseService firebaseService)
         {
             _context = context;
+            _firebaseService = firebaseService;
         }
 
         public async Task<IEnumerable<Notification>> GetUserNotificationsAsync(int userId, bool unreadOnly = false)
@@ -33,6 +35,37 @@ namespace API.Services
         {
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
+
+            // Send Push Notification
+            var user = await _context.Users.FindAsync(notification.UserId);
+            if (user != null && !string.IsNullOrEmpty(user.FcmToken))
+            {
+                var title = mapTypeToTitle(notification.Type);
+                var data = new Dictionary<string, string>
+                {
+                    { "notificationId", notification.NotificationId.ToString() },
+                    { "type", notification.Type.ToString() },
+                    { "plantId", notification.PlantId?.ToString() ?? "" }
+                };
+
+                await _firebaseService.SendNotificationAsync(user.FcmToken, title, notification.Message, data);
+            }
+        }
+
+        private static string mapTypeToTitle(NotificationType type)
+        {
+            return type switch
+            {
+                NotificationType.LowMoisture => "💧 Низька вологість",
+                NotificationType.HighMoisture => "💧 Висока вологість",
+                NotificationType.LowLight => "☀️ Мало світла",
+                NotificationType.HighLight => "☀️ Забагато світла",
+                NotificationType.BatteryLow => "🔋 Низький заряд батареї",
+                NotificationType.DeviceOffline => "⚠️ Пристрій офлайн",
+                NotificationType.WateringComplete => "✅ Полив завершено",
+                NotificationType.WateringFailed => "❌ Помилка поливу",
+                _ => "🌿 PlantIQ"
+            };
         }
 
         public async Task MarkAsReadAsync(int notificationId)

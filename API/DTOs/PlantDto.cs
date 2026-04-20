@@ -18,6 +18,7 @@ namespace API.DTOs
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public bool IsActive { get; set; }
+        public WateringMode WateringMode { get; set; }
     }
 
     public class CreatePlantDto
@@ -36,6 +37,7 @@ namespace API.DTOs
         public decimal? OptimalLightMin { get; set; }
         public decimal? OptimalLightMax { get; set; }
         public string? Notes { get; set; }
+        public WateringMode WateringMode { get; set; } = WateringMode.Manual;
     }
 
     public class UpdatePlantDto
@@ -55,5 +57,6 @@ namespace API.DTOs
         public decimal? OptimalLightMax { get; set; }
         public string? Notes { get; set; }
         public bool IsActive { get; set; }
+        public WateringMode WateringMode { get; set; }
     }
 }

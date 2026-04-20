@@ -26,8 +26,11 @@ struct Schedule {
     int hour;
     int minute;
     int amountMl;
+    int intervalHours;
+    int repeatCount;
     bool days[7]; 
-    bool watered = false; 
+    int repeatsDone = 0;
+    int lastWateredDay = -1;
 };
 
 std::vector<Schedule> activeSchedules;
@@ -72,15 +75,25 @@ void fetchSchedules() {
                 Schedule newSched;
                 newSched.id = s["scheduleId"];
                 newSched.amountMl = s["amountMl"];
+                newSched.repeatCount = s["repeatCount"] | 1;
+                newSched.intervalHours = s["intervalHours"] | 24;
 
                 String timeStr = s["startTime"].as<String>();
                 newSched.hour = timeStr.substring(0, 2).toInt();
                 newSched.minute = timeStr.substring(3, 5).toInt();
+                
                 for(int i=0; i<7; i++) newSched.days[i] = false;
                 JsonArray days = s["daysOfWeek"].as<JsonArray>();
                 for (int day : days) {
-                    if (day >= 0 && day <= 6) newSched.days[day] = true;
+                    if (day >= 1 && day <= 7) {
+                        // Backend uses 1-7 (Mon-Sun), timeinfo.tm_wday uses 0-6 (Sun-Sat)
+                        int convertedDay = (day == 7) ? 0 : day; 
+                        newSched.days[convertedDay] = true;
+                    }
                 }
+                
+                newSched.repeatsDone = 0;
+                newSched.lastWateredDay = -1;
                 
                 activeSchedules.push_back(newSched);
             }
@@ -120,7 +133,7 @@ void postWateringEvent(int scheduleId, int amount, String status) {
 }
 
 void performWatering(Schedule &s) {
-    log("[PUMP]", "START: Watering Schedule " + String(s.id) + " | Amount: " + String(s.amountMl) + "ml");
+    log("[PUMP]", "START: Watering Schedule " + String(s.id) + " (Repeat " + String(s.repeatsDone + 1) + "/" + String(s.repeatCount) + ")");
 
     digitalWrite(pumpPin, HIGH);
     int durationMs = (s.amountMl / 20) * 1000; 
@@ -128,6 +141,7 @@ void performWatering(Schedule &s) {
     digitalWrite(pumpPin, LOW);
 
     log("[PUMP]", "STOP: Watering finished after " + String(durationMs) + "ms");
+    s.repeatsDone++;
     postWateringEvent(s.id, s.amountMl, "Completed");
 }
 
@@ -136,17 +150,26 @@ void checkSchedulesLogic() {
     if (!getLocalTime(&timeinfo)) return;
 
     for (Schedule &s : activeSchedules) {
-        bool dayMatch = s.days[timeinfo.tm_wday];
-        bool timeMatch = (timeinfo.tm_hour == s.hour && timeinfo.tm_min == s.minute);
+        // Reset repeats at the start of a new day
+        if (timeinfo.tm_mday != s.lastWateredDay) {
+            s.repeatsDone = 0;
+            s.lastWateredDay = timeinfo.tm_mday;
+            log("[LOGIC]", "New day detected. Resetting repeats for schedule " + String(s.id));
+        }
 
-        if (dayMatch && timeMatch) {
-            if (!s.watered) {
-                log("[LOGIC]", "Schedule match found for " + String(s.id) + " | " + String(s.hour) + ":" + String(s.minute));
-                performWatering(s);
-                s.watered = true; 
-            }
-        } else {
-            s.watered = false;
+        if (s.repeatsDone >= s.repeatCount) continue;
+
+        bool dayMatch = s.days[timeinfo.tm_wday];
+        if (!dayMatch) continue;
+
+        // Calculate target time for the current repeat
+        int targetTotalMinutes = (s.hour * 60 + s.minute) + (s.repeatsDone * s.intervalHours * 60);
+        int currentTotalMinutes = timeinfo.tm_hour * 60 + timeinfo.tm_min;
+
+        // Check if it's time to water (within a 2-minute window)
+        if (currentTotalMinutes >= targetTotalMinutes && currentTotalMinutes < targetTotalMinutes + 2) {
+            log("[LOGIC]", "Time match found for schedule " + String(s.id) + " | Repeat " + String(s.repeatsDone + 1));
+            performWatering(s);
         }
     }
 }
