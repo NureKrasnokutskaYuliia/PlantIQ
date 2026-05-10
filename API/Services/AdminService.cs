@@ -1,4 +1,4 @@
-﻿using API.Data;
+using API.Data;
 using API.Models;
 using API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +19,7 @@ namespace API.Services
             return new SystemStatsDto
             {
                 TotalUsers = await _context.Users.CountAsync(),
-                ActiveDevices = await _context.Devices.CountAsync(d => d.Status == DeviceStatus.Online),
+                TotalDevices = await _context.Devices.CountAsync(),
                 TotalPlants = await _context.Plants.CountAsync(),
                 CriticalAlertsLast24h = await _context.Notifications
                     .CountAsync(n => n.Priority == NotificationPriority.Critical && n.Timestamp > DateTime.UtcNow.AddDays(-1)),

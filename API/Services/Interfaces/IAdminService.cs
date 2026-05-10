@@ -1,4 +1,4 @@
-﻿namespace API.Services.Interfaces
+namespace API.Services.Interfaces
 {
     public interface IAdminService
     {
@@ -17,7 +17,7 @@
     public class SystemStatsDto
     {
         public int TotalUsers { get; set; }
-        public int ActiveDevices { get; set; }
+        public int TotalDevices { get; set; }
         public int TotalPlants { get; set; }
         public int CriticalAlertsLast24h { get; set; }
         public double DatabaseSizeMb { get; set; }
