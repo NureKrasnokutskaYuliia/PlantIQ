@@ -33,24 +33,34 @@ namespace API
 
             // Initialize Firebase
             var firebaseKeyPath = Path.Combine(builder.Environment.ContentRootPath, "firebase-server-key.json");
-            if (File.Exists(firebaseKeyPath))
+            var firebaseConfigJson = Environment.GetEnvironmentVariable("FIREBASE_CONFIG");
+
+            try
             {
-                try
+                if (!string.IsNullOrEmpty(firebaseConfigJson))
+                {
+                    FirebaseAdmin.FirebaseApp.Create(new FirebaseAdmin.AppOptions()
+                    {
+                        Credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromJson(firebaseConfigJson)
+                    });
+                    Console.WriteLine("Firebase: Successfully initialized from ENVIRONMENT VARIABLE.");
+                }
+                else if (File.Exists(firebaseKeyPath))
                 {
                     FirebaseAdmin.FirebaseApp.Create(new FirebaseAdmin.AppOptions()
                     {
                         Credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(firebaseKeyPath)
                     });
-                    Console.WriteLine("Firebase: Successfully initialized.");
+                    Console.WriteLine("Firebase: Successfully initialized from JSON FILE.");
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine($"Firebase Error: {ex.Message}");
+                    Console.WriteLine("Firebase CRITICAL WARNING: No configuration found (neither file nor env var). Push notifications WILL NOT work.");
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("Firebase WARNING: firebase-server-key.json NOT FOUND. Push notifications will be disabled.");
+                Console.WriteLine($"Firebase Initialization Error: {ex.Message}");
             }
 
             var jwtSettings = builder.Configuration.GetSection("Jwt");
