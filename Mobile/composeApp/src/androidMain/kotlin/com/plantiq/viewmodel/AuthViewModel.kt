@@ -32,6 +32,22 @@ class AuthViewModel : ViewModel() {
                 if (response.status.value in 200..299) {
                     val body: LoginResponseDto = response.body()
                     ApiClient.token = body.token
+                    
+                    // Відправляємо FCM токен на сервер
+                    com.google.firebase.messaging.FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val fcmToken = task.result
+                            viewModelScope.launch {
+                                try {
+                                    ApiClient.api.updateDeviceToken(fcmToken)
+                                    println("PlantIQ: FCM Token successfully sent to server")
+                                } catch (e: Exception) {
+                                    println("PlantIQ: Failed to send FCM Token: ${e.message}")
+                                }
+                            }
+                        }
+                    }
+
                     _authState.value = AuthState.Success(body.user)
                 } else {
                     _authState.value = AuthState.Error("Користувача з такою поштою та паролем не існує")

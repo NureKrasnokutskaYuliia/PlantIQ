@@ -9,10 +9,12 @@ namespace API.Services
     public class AdminService : IAdminService
     {
         private readonly AppDbContext _context;
+        private readonly IFirebaseService _firebaseService;
 
-        public AdminService(AppDbContext context)
+        public AdminService(AppDbContext context, IFirebaseService firebaseService)
         {
             _context = context;
+            _firebaseService = firebaseService;
         }
 
         public async Task<API.DTOs.SystemStatisticsDto> GetSystemStatisticsAsync()
@@ -56,6 +58,8 @@ namespace API.Services
             }
 
             var users = await _context.Users.Where(u => u.IsActive).ToListAsync();
+            
+            // 1. Зберігаємо в базу даних для внутрішнього перегляду
             var notifications = users.Select(u => new Notification
             {
                 UserId = u.UserId,
@@ -68,6 +72,16 @@ namespace API.Services
 
             _context.Notifications.AddRange(notifications);
             await _context.SaveChangesAsync();
+
+            // 2. Відправляємо реальні PUSH сповіщення через Firebase
+            foreach (var user in users.Where(u => !string.IsNullOrEmpty(u.FcmToken)))
+            {
+                await _firebaseService.SendNotificationAsync(
+                    user.FcmToken!,
+                    "PlantIQ Global Alert",
+                    message
+                );
+            }
         }
     }
 }
