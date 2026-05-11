@@ -22,6 +22,8 @@ namespace API.Services
 
         public async Task<API.DTOs.SystemStatisticsDto> GetSystemStatisticsAsync()
         {
+            await CleanupAdminDataInternalAsync();
+
             return new API.DTOs.SystemStatisticsDto
             {
                 TotalUsers = await _context.Users.CountAsync(),
@@ -31,6 +33,28 @@ namespace API.Services
                     .CountAsync(n => n.Priority == NotificationPriority.Critical && n.Timestamp > DateTime.UtcNow.AddDays(-1)),
                 DatabaseSizeMb = 0
             };
+        }
+
+        private async Task CleanupAdminDataInternalAsync()
+        {
+            var admins = await _context.Users.Where(u => u.Role == UserRole.Admin).ToListAsync();
+            foreach (var admin in admins)
+            {
+                var adminPlants = await _context.Plants.Where(p => p.UserId == admin.UserId).ToListAsync();
+                if (adminPlants.Any())
+                {
+                    _context.Plants.RemoveRange(adminPlants);
+                    _logger.LogInformation("Cleanup: Removed {Count} plants from Admin ID {Id}", adminPlants.Count, admin.UserId);
+                }
+
+                var adminDevices = await _context.Devices.Where(d => d.UserId == admin.UserId).ToListAsync();
+                if (adminDevices.Any())
+                {
+                    _context.Devices.RemoveRange(adminDevices);
+                    _logger.LogInformation("Cleanup: Removed {Count} devices from Admin ID {Id}", adminDevices.Count, admin.UserId);
+                }
+            }
+            await _context.SaveChangesAsync();
         }
 
         public async Task BanUserAsync(int userId)
@@ -62,11 +86,9 @@ namespace API.Services
                 priority = NotificationPriority.Normal;
             }
 
-            // Отримуємо всіх активних користувачів
             var users = await _context.Users.Where(u => u.IsActive).ToListAsync();
             _logger.LogInformation("Starting global notification broadcast to {Count} active users.", users.Count);
 
-            // 1. Зберігаємо в базу даних для внутрішньої історії (щоб користувач бачив сповіщення в додатку)
             var notifications = users.Select(u => new Notification
             {
                 UserId = u.UserId,
@@ -81,7 +103,6 @@ namespace API.Services
             await _context.SaveChangesAsync();
             _logger.LogInformation("Notifications saved to database for {Count} users.", users.Count);
 
-            // 2. Відправляємо реальні PUSH через Firebase тим, у кого є токен
             var usersWithToken = users.Where(u => !string.IsNullOrEmpty(u.FcmToken)).ToList();
             _logger.LogInformation("Found {Count} users with valid FCM device tokens.", usersWithToken.Count);
 
@@ -91,14 +112,13 @@ namespace API.Services
                 {
                     await _firebaseService.SendNotificationAsync(
                         user.FcmToken!,
-                        "PlantIQ Global Alert",
+                        "PlantIQ",
                         message
                     );
-                    _logger.LogInformation("Push sent successfully to User ID: {UserId}", user.UserId);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Failed to send push notification to User ID: {UserId}. Error: {Message}", user.UserId, ex.Message);
+                    _logger.LogError(ex, "Exception in AdminService during push send to User ID: {UserId}", user.UserId);
                 }
             }
 

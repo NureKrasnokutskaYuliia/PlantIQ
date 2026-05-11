@@ -16,6 +16,13 @@ namespace API.Services
         {
             try
             {
+                var messaging = FirebaseMessaging.DefaultInstance;
+                if (messaging == null)
+                {
+                    _logger.LogError("Firebase Error: FirebaseMessaging.DefaultInstance is null. FirebaseApp was not initialized correctly at startup. Please check your FIREBASE_CONFIG or JSON key file.");
+                    return;
+                }
+
                 var message = new Message()
                 {
                     Token = token,
@@ -27,12 +34,16 @@ namespace API.Services
                     Data = data
                 };
 
-                string response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
-                _logger.LogInformation("Successfully sent message: {Response}", response);
+                string response = await messaging.SendAsync(message);
+                _logger.LogInformation("Successfully sent message to Firebase. Response: {Response}", response);
+            }
+            catch (FirebaseAdmin.FirebaseException ex)
+            {
+                _logger.LogError("Firebase API error: {ErrorCode}, Message: {Message}", ex.ErrorCode, ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending Firebase notification to token {Token}", token);
+                _logger.LogError(ex, "General error sending Firebase notification to token {Token}. Message: {Msg}", token, ex.Message);
             }
         }
     }
