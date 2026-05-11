@@ -1,0 +1,128 @@
+<div class="page-header">
+  <h2>💧 {{ 'WATERING.TITLE' | translate }}</h2>
+  <p class="sub">{{ 'WATERING.SUBTITLE' | translate }}</p>
+</div>
+
+@if (error()) { <div class="alert error">{{ error() | translate }}</div> }
+
+@if (isLoading()) {
+  <div class="loading"><div class="spinner"></div></div>
+} @else if (plantData().length === 0) {
+  <div class="empty-state">
+    <div class="empty-icon">💧</div>
+    <p>{{ 'WATERING.EMPTY_PLANTS' | translate }}</p>
+  </div>
+} @else {
+  @for (entry of plantData(); track entry.plant.plantId; let idx = $index) {
+    <div class="plant-section">
+      <div class="plant-section-header" (click)="toggle(idx)">
+        <div class="plant-info">
+          <span class="plant-emoji">🪴</span>
+          <div>
+            <strong>{{ entry.plant.name }}</strong>
+            <span class="species">{{ entry.plant.species }}</span>
+          </div>
+        </div>
+        <div class="plant-summary">
+          <select [ngModel]="entry.plant.wateringMode" (ngModelChange)="updateWateringMode(idx, entry.plant.plantId, $event)" (click)="$event.stopPropagation()">
+            <option [ngValue]="0">{{ 'WATERING.MODE_MANUAL' | translate }}</option>
+            <option [ngValue]="1">{{ 'WATERING.MODE_SENSORS' | translate }}</option>
+            <option [ngValue]="2">{{ 'WATERING.MODE_SCHED' | translate }}</option>
+          </select>
+          <span class="badge blue">{{ entry.events.length }} {{ 'WATERING.EVENTS_COUNT' | translate }}</span>
+          <span class="badge green">{{ totalWatered(entry.events) }} {{ 'WATERING.TOTAL_WATERED' | translate }}</span>
+          <span class="chevron">{{ entry.expanded ? '▲' : '▼' }}</span>
+        </div>
+      </div>
+
+      @if (entry.expanded) {
+        <!-- Schedules -->
+        <div class="subsection">
+          <div class="subsection-header">
+            <h4>📅 {{ 'WATERING.SCHEDULES' | translate }}</h4>
+            <button class="btn-icon add" (click)="openScheduleForm(entry.plant.plantId, idx)" title="{{ 'WATERING.ADD_SCHEDULE' | translate }}">➕</button>
+          </div>
+          @if (entry.schedules.length > 0) {
+            <div class="schedules-grid">
+              @for (s of entry.schedules; track s.scheduleId) {
+                <div class="schedule-card" [class.disabled]="!s.enabled">
+                  <div class="schedule-header">
+                    <span>⏰ {{ s.startTime }}</span>
+                    <span class="badge" [class.green]="s.enabled" [class.grey]="!s.enabled">
+                      {{ s.enabled ? ('WATERING.ACTIVE' | translate) : ('WATERING.DISABLED' | translate) }}
+                    </span>
+                    <button class="btn-icon" (click)="deleteSchedule(idx, s.scheduleId)">🗑️</button>
+                  </div>
+                  <div class="schedule-meta">
+                    <span>💧 {{ s.amountMl }} мл</span>
+                    <span>🔁 Кожні {{ s.intervalHours }}г</span>
+                    @if ((s.daysOfWeek?.length ?? 0) > 0) {
+                      <span>📆 {{ s.daysOfWeek.map(d => DAYS[d]).join(', ') }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="no-events">{{ 'WATERING.NO_SCHED' | translate }}</p>
+          }
+        </div>
+
+        <!-- Events history -->
+        <div class="subsection">
+          <h4>📋 {{ 'WATERING.HISTORY' | translate }}</h4>
+          @if (entry.events.length === 0) {
+            <p class="no-events">{{ 'WATERING.NO_EVENTS' | translate }}</p>
+          } @else {
+            <div class="events-list">
+              @for (ev of entry.events; track ev.eventId) {
+                <div class="event-row">
+                  <div class="event-left">
+                    <span class="event-mode">{{ MODE_LABELS[ev.mode] ?? '—' }}</span>
+                    <span class="event-date">{{ ev.timestamp | date:'dd.MM.yyyy HH:mm' }}</span>
+                  </div>
+                  <div class="event-right">
+                    <span class="event-amount">{{ ev.amountMl }} мл</span>
+                    <span class="event-status" [class]="STATUS_CLASSES[ev.status]">
+                      {{ STATUS_LABELS[ev.status] ?? '—' }}
+                    </span>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+}
+
+<!-- Add Schedule Modal -->
+@if (showScheduleForm()) {
+  <div class="modal-overlay" (click)="closeScheduleForm()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>➕ {{ 'WATERING.ADD_SCHEDULE' | translate }}</h3>
+        <button class="modal-close" (click)="closeScheduleForm()">✕</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>{{ 'WATERING.TIME' | translate }}</label>
+          <input type="time" [(ngModel)]="newSchedule.startTime">
+        </div>
+        <div class="form-group">
+          <label>{{ 'WATERING.INTERVAL' | translate }}</label>
+          <input type="number" [(ngModel)]="newSchedule.intervalHours" min="1">
+        </div>
+        <div class="form-group">
+          <label>{{ 'WATERING.AMOUNT' | translate }}</label>
+          <input type="number" [(ngModel)]="newSchedule.amountMl" step="10">
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeScheduleForm()">{{ 'PLANTS.CANCEL_BTN' | translate }}</button>
+        <button class="btn-primary" (click)="saveSchedule()">💾 {{ 'PLANTS.SAVE' | translate }}</button>
+      </div>
+    </div>
+  </div>
+}

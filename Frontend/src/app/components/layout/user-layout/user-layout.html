@@ -1,0 +1,26 @@
+<div class="layout-container">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span class="brand-icon">🌱</span> PlantIQ
+    </div>
+    <ul class="nav-links">
+      <li><a routerLink="/user/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">{{
+          'NAV.HOME' | translate }}</a></li>
+      <li><a routerLink="/user/plants" routerLinkActive="active">{{ 'NAV.PLANTS' | translate }}</a></li>
+      <li><a routerLink="/user/devices" routerLinkActive="active">{{ 'NAV.DEVICES' | translate }}</a></li>
+      <li><a routerLink="/user/watering" routerLinkActive="active">{{ 'NAV.WATERING' | translate }}</a></li>
+      <li><a routerLink="/user/analytics" routerLinkActive="active">{{ 'NAV.ANALYTICS' | translate }}</a></li>
+      <li *ngIf="isAdmin"><a routerLink="/admin" class="admin-link">🛡️ {{ 'NAV.ADMIN' | translate }}</a></li>
+    </ul>
+    <div class="nav-actions">
+      <app-theme-toggle></app-theme-toggle>
+      <app-language-switcher></app-language-switcher>
+      <a routerLink="/user/profile" class="profile-btn">👤 {{ userName }}</a>
+      <button class="logout-btn" (click)="logout()">{{ 'NAV.LOGOUT' | translate }}</button>
+    </div>
+  </nav>
+
+  <main class="content-area">
+    <router-outlet></router-outlet>
+  </main>
+</div>

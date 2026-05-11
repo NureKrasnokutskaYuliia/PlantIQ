@@ -1,0 +1,40 @@
+<div class="dashboard-header">
+  <h1>
+    @if (userName) {
+      {{ 'USER.GREETING' | translate }}, {{ userName }}!
+    }
+    {{ 'USER.WELCOME' | translate }}
+  </h1>
+  <p class="subtitle">{{ 'USER.SUBTITLE' | translate }}</p>
+</div>
+
+<div class="cards-grid">
+  <div class="card" routerLink="/user/plants">
+    <div class="card-icon">🌿</div>
+    <div class="card-content">
+      <h3>{{ 'NAV.PLANTS' | translate }}</h3>
+      <p>{{ 'USER.PLANTS_DESC' | translate }}</p>
+    </div>
+  </div>
+  <div class="card" routerLink="/user/watering">
+    <div class="card-icon">💧</div>
+    <div class="card-content">
+      <h3>{{ 'NAV.WATERING' | translate }}</h3>
+      <p>{{ 'USER.WATERING_DESC' | translate }}</p>
+    </div>
+  </div>
+  <div class="card" routerLink="/user/devices">
+    <div class="card-icon">📡</div>
+    <div class="card-content">
+      <h3>{{ 'NAV.DEVICES' | translate }}</h3>
+      <p>{{ 'USER.DEVICES_DESC' | translate }}</p>
+    </div>
+  </div>
+  <div class="card" routerLink="/user/analytics">
+    <div class="card-icon">📊</div>
+    <div class="card-content">
+      <h3>{{ 'NAV.ANALYTICS' | translate }}</h3>
+      <p>{{ 'USER.ANALYTICS_DESC' | translate }}</p>
+    </div>
+  </div>
+</div>

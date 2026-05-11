@@ -1,0 +1,33 @@
+<div class="page">
+  <h2>📥 {{ 'ADMIN.IMPORT_EXPORT' | translate }}</h2>
+  <p class="sub">{{ 'ADMIN.TITLE' | translate }} — {{ 'ADMIN.BACKUPS' | translate }}</p>
+
+  <div class="export-grid">
+    <div class="export-card">
+      <div class="icon">📦</div>
+      <h3>Full System Backup</h3>
+      <p>Export all users, system statistics, and configurations to a single JSON file for offline storage.</p>
+      <button class="btn json-btn" (click)="exportJson()" [disabled]="isExporting()">
+        {{ isExporting() ? 'Exporting...' : 'Export JSON' }}
+      </button>
+    </div>
+
+    <div class="export-card">
+      <div class="icon">👥</div>
+      <h3>Users List (CSV)</h3>
+      <p>Download a spreadsheet with all registered users, their roles, and registration dates.</p>
+      <button class="btn csv-btn" (click)="exportUsersCsv()">Download CSV</button>
+    </div>
+
+    <div class="export-card">
+      <div class="icon">⚙️</div>
+      <h3>System Settings (CSV)</h3>
+      <p>Export all environment variables and system-wide configurations to a CSV file.</p>
+      <button class="btn csv-btn" (click)="exportSettingsCsv()">Download CSV</button>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>ℹ️ Security Note:</strong> Backups contain sensitive user information (names, emails). Store these files in a secure location and do not share them with unauthorized personnel. CSV files are encoded in UTF-8 with BOM for compatibility with Microsoft Excel.
+  </div>
+</div>

@@ -1,0 +1,94 @@
+<div class="page">
+  <h2>👥 {{ 'ADMIN.MANAGE_USERS' | translate }}</h2>
+  <p class="sub">{{ 'ADMIN.TITLE' | translate }} — {{ 'ADMIN.MANAGE_USERS' | translate }}</p>
+
+  @if (error()) { <div class="alert error">{{ error() | translate }}</div> }
+  @if (success()) { <div class="alert success">{{ success() | translate }}</div> }
+
+  <div class="page-actions">
+    <button class="btn primary" (click)="showCreateForm.set(true)">➕ {{ 'ADMIN.ADD_USER' | translate }}</button>
+  </div>
+
+  @if (showCreateForm()) {
+    <div class="modal-overlay">
+      <div class="modal">
+        <h3>➕ {{ 'ADMIN.ADD_USER' | translate }}</h3>
+        <div class="form-group">
+          <label>{{ 'AUTH.NAME_LABEL' | translate }}</label>
+          <input type="text" [(ngModel)]="newUser.name" placeholder="Ім'я">
+        </div>
+        <div class="form-group">
+          <label>{{ 'AUTH.EMAIL_LABEL' | translate }}</label>
+          <input type="email" [(ngModel)]="newUser.email" placeholder="email@example.com">
+        </div>
+        <div class="form-group">
+          <label>{{ 'AUTH.PASSWORD_LABEL' | translate }}</label>
+          <input type="password" [(ngModel)]="newUser.password" placeholder="Пароль">
+        </div>
+        <div class="form-group">
+          <label>{{ 'PROFILE.ROLE' | translate }}</label>
+          <select [(ngModel)]="newUser.role">
+            <option [ngValue]="0">👤 Користувач</option>
+            <option [ngValue]="1">👑 Адмін</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" (click)="showCreateForm.set(false)">{{ 'COMMON.CANCEL' | translate }}</button>
+          <button class="btn primary" (click)="createUser()">{{ 'COMMON.SAVE' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (isLoading()) {
+  <div class="loader">
+    <div class="spinner"></div> Завантаження...
+  </div>
+  } @else {
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>{{ 'AUTH.NAME_LABEL' | translate }}</th>
+          <th>{{ 'AUTH.EMAIL_LABEL' | translate }}</th>
+          <th>{{ 'PROFILE.ROLE' | translate }}</th>
+          <th>Статус</th>
+          <th>{{ 'PROFILE.MEMBER_SINCE' | translate }}</th>
+          <th>{{ 'PLANTS.UPDATED' | translate }}</th>
+          <th>{{ 'ADMIN.MANAGE_DATA' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (u of users(); track u.userId) {
+        <tr [class.banned]="!u.isActive">
+          <td class="mono">{{ u.userId }}</td>
+          <td><strong>{{ u.name }}</strong></td>
+          <td>{{ u.email }}</td>
+          <td>{{ getRoleName(u.role) }}</td>
+          <td>
+            <span class="badge" [class.active]="u.isActive" [class.inactive]="!u.isActive">
+              {{ u.isActive ? '🟢 Активний' : '🔴 Заблокований' }}
+            </span>
+          </td>
+          <td>{{ u.lastLogin ? (u.lastLogin | date:'dd.MM.yyyy HH:mm') : '—' }}</td>
+          <td>{{ u.createdAt | date:'dd.MM.yyyy' }}</td>
+          <td class="actions">
+            @if (u.isActive) {
+            <button class="btn ban" (click)="ban(u.userId, u.name)" title="Ban">🚫</button>
+            } @else {
+            <button class="btn unban" (click)="unban(u.userId, u.name)" title="Unban">✅</button>
+            }
+            @if (u.role === 0) {
+              <button class="btn promote" (click)="promote(u.userId, u.name)" title="Make Admin">👑</button>
+            }
+            <button class="btn delete" (click)="delete(u.userId, u.name)" title="Delete">🗑️</button>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="total">Всього: <strong>{{ users().length }}</strong> користувачів</div>
+  }
+</div>

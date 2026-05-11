@@ -1,0 +1,71 @@
+<div class="page-header">
+  <h2>📡 {{ 'DEVICES.TITLE' | translate }}</h2>
+  <button class="btn-primary" (click)="showAddForm.set(!showAddForm())">
+    {{ showAddForm() ? '✕ ' + ('PLANTS.CANCEL_BTN' | translate) : '+ ' + ('DEVICES.ADD_BTN' | translate) }}
+  </button>
+</div>
+
+@if (error()) { <div class="alert error">{{ error() | translate }}</div> }
+
+@if (showAddForm()) {
+<div class="add-form-card">
+  <h3>{{ 'DEVICES.NEW_DEVICE' | translate }}</h3>
+  <div class="form-grid">
+    <div class="form-group">
+      <label>{{ 'DEVICES.NAME' | translate }} *</label>
+      <input [(ngModel)]="newDevice.name" placeholder="Датчик вітальня">
+    </div>
+    <div class="form-group">
+      <label>{{ 'DEVICES.MODEL' | translate }}</label>
+      <input [(ngModel)]="newDevice.model" placeholder="PlantIQ v1">
+    </div>
+    <div class="form-group">
+      <label>{{ 'DEVICES.SERIAL' | translate }}</label>
+      <input [(ngModel)]="newDevice.serialNumber" placeholder="SN-001">
+    </div>
+  </div>
+  <button class="btn-primary" (click)="add()">{{ 'DEVICES.SAVE' | translate }}</button>
+</div>
+}
+
+@if (isLoading()) {
+<div class="loading-state">
+  <div class="spinner-lg"></div>
+  <p>Завантаження пристроїв...</p>
+</div>
+} @else if (devices().length === 0) {
+<div class="empty-state">
+  <div class="empty-icon">📡</div>
+  <h3>{{ 'DEVICES.EMPTY' | translate }}</h3>
+  <p>{{ 'DEVICES.EMPTY_SUB' | translate }}</p>
+</div>
+} @else {
+<div class="devices-grid">
+  @for (d of devices(); track d.deviceId) {
+  <div class="device-card">
+    <div class="device-header">
+      <div class="device-icon">📡</div>
+      <div>
+        <h3>{{ d.name }}</h3>
+        <span class="device-model">{{ d.model || 'Модель невідома' }}</span>
+      </div>
+      <button class="btn-icon danger" (click)="delete(d.deviceId)" title="Видалити">🗑️</button>
+    </div>
+
+    <div class="device-status" [class]="getStatusClass(d.status)">
+      {{ getStatusLabel(d.status) }}
+    </div>
+
+    <div class="device-meta">
+      @if (plantMap()[d.deviceId]) { <span class="attached-plant">🪴 {{ 'DEVICES.CONNECTED_TO' | translate }}:
+        <strong>{{ plantMap()[d.deviceId] }}</strong></span> }
+      @if (d.serialNumber) { <span>🔖 {{ 'DEVICES.SERIAL' | translate }}: {{ d.serialNumber }}</span> }
+      @if (d.firmwareVersion) { <span>🔧 {{ 'PLANTS.UPDATED' | translate }}: {{ d.firmwareVersion }}</span> }
+      @if (d.lastSync) { <span>🔄 {{ 'PLANTS.UPDATED' | translate }}: {{ d.lastSync | date:'dd.MM.yyyy HH:mm' }}</span>
+      }
+      <span>📅 {{ 'PROFILE.MEMBER_SINCE' | translate }}: {{ d.createdAt | date:'dd.MM.yyyy' }}</span>
+    </div>
+  </div>
+  }
+</div>
+}

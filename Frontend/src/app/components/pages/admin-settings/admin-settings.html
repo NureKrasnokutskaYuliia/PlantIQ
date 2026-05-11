@@ -1,0 +1,23 @@
+<div class="page">
+  <h2>⚙️ {{ 'ADMIN.SETTINGS_TITLE' | translate }}</h2>
+  <p class="sub">{{ 'ADMIN.TITLE' | translate }} — {{ 'ADMIN.SETTINGS_TITLE' | translate }}</p>
+
+  @if (error()) { <div class="alert error">{{ error() | translate }}</div> }
+  @if (success()) { <div class="alert success">{{ success() | translate }}</div> }
+
+  @if (isLoading()) {
+    <div class="loader"><div class="spinner"></div></div>
+  } @else if (settings().length === 0) {
+    <div class="empty">No settings found.</div>
+  } @else {
+    <div class="settings-card">
+      @for (s of settings(); track s.key) {
+        <div class="setting-row">
+          <div class="key-label">{{ s.key }}</div>
+          <input class="val-input" [(ngModel)]="editValues[s.key]">
+          <button class="btn-save" (click)="save(s.key)">💾 {{ 'ADMIN.SETTINGS_SAVE' | translate }}</button>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -1,0 +1,115 @@
+.page {
+    h2 {
+        color: var(--text-primary);
+        margin-bottom: .25rem;
+    }
+
+    .sub {
+        color: var(--text-secondary);
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.alert {
+    padding: .85rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+
+    &.error {
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+        color: #b91c1c;
+    }
+
+    &.success {
+        background: #f0fdf4;
+        border-left: 4px solid #16a34a;
+        color: #15803d;
+    }
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    padding: 3rem;
+}
+
+.spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--border-color);
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.empty {
+    color: #94a3b8;
+    padding: 2rem;
+    text-align: center;
+}
+
+.settings-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+    overflow: hidden;
+}
+
+.setting-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .85rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.key {
+    font-family: monospace;
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 220px;
+    font-size: .9rem;
+}
+
+.val-input {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+    flex: 1;
+    padding: .5rem .75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: .9rem;
+
+    &:focus {
+        outline: none;
+        border-color: #3b82f6;
+    }
+}
+
+.btn-save {
+    padding: .5rem 1rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+        background: #2563eb;
+    }
+}

@@ -1,0 +1,51 @@
+<div class="admin-layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <span class="brand-icon">🌱</span>
+        <div>
+          <div class="brand-name">PlantIQ</div>
+          <div class="brand-sub">Admin Dashboard</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-badge">
+      👤 {{ userName }}
+    </div>
+
+    <nav class="nav-menu">
+      <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+        <span class="icon">📊</span> {{ 'NAV.HOME' | translate }}
+      </a>
+      <a routerLink="/admin/users" routerLinkActive="active">
+        <span class="icon">👥</span> {{ 'ADMIN.MANAGE_USERS' | translate }}
+      </a>
+      <a routerLink="/admin/notifications" routerLinkActive="active">
+        <span class="icon">📣</span> {{ 'ADMIN.NOTIF_TITLE' | translate }}
+      </a>
+      <a routerLink="/admin/settings" routerLinkActive="active">
+        <span class="icon">⚙️</span> {{ 'ADMIN.SETTINGS_TITLE' | translate }}
+      </a>
+      <a routerLink="/admin/export" routerLinkActive="active">
+        <span class="icon">💾</span> {{ 'ADMIN.BACKUPS' | translate }}
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="footer-actions">
+        <app-theme-toggle></app-theme-toggle>
+        <app-language-switcher></app-language-switcher>
+      </div>
+      <button class="logout-btn" (click)="logout()">
+        🚪 {{ 'NAV.LOGOUT' | translate }}
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <div class="content-body">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

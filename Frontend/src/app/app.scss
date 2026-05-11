@@ -1,0 +1,83 @@
+/* Global session modal styles */
+.session-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.session-modal-card {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  width: 90%;
+  max-width: 450px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  .session-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  h3 {
+    margin: 0 0 0.75rem 0;
+    color: #1e293b;
+    font-size: 1.5rem;
+  }
+  
+  p {
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+}
+
+@keyframes popIn { 
+  from { transform: scale(0.9); opacity: 0; } 
+  to { transform: scale(1); opacity: 1; } 
+}
+
+.session-actions {
+  display: flex;
+  gap: 1rem;
+  
+  button {
+    flex: 1;
+    padding: 0.85rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  
+  .btn-logout {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    
+    &:hover {
+      background: #fee2e2;
+    }
+  }
+  
+  .btn-stay {
+    background: #3b82f6;
+    color: white;
+    
+    &:hover {
+      background: #2563eb;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+  }
+}

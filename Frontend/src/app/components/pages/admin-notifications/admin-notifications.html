@@ -1,0 +1,38 @@
+<div class="page">
+  <h2>📣 {{ 'ADMIN.NOTIF_TITLE' | translate }}</h2>
+  <p class="sub">{{ 'ADMIN.NOTIF_SUB' | translate }}</p>
+
+  <div class="notif-card">
+    @if (error()) { <div class="alert error">{{ error() | translate }}</div> }
+    @if (success()) { <div class="alert success">{{ success() | translate }}</div> }
+
+    <div class="form-group">
+      <label>{{ 'ADMIN.NOTIF_LABEL_TITLE' | translate }} *</label>
+      <input [(ngModel)]="title" [placeholder]="'ADMIN.NOTIF_LABEL_TITLE' | translate" [disabled]="isSending()">
+    </div>
+
+    <div class="form-group">
+      <label>{{ 'ADMIN.NOTIF_LABEL_MSG' | translate }} *</label>
+      <textarea [(ngModel)]="message" rows="5" [placeholder]="'ADMIN.NOTIF_LABEL_MSG' | translate" [disabled]="isSending()"></textarea>
+    </div>
+
+    <div class="preview" *ngIf="title || message">
+      <div class="preview-label">Preview</div>
+      <div class="notif-bubble">
+        <div class="notif-icon">🌱</div>
+        <div>
+          <div class="notif-title">{{ title || 'Title' }}</div>
+          <div class="notif-body">{{ message || 'Message body' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-send" (click)="send()" [disabled]="isSending()">
+      @if (isSending()) {
+        <span class="spinner"></span> {{ 'ADMIN.NOTIF_SENDING' | translate }}
+      } @else {
+        📤 {{ 'ADMIN.NOTIF_SEND_BTN' | translate }}
+      }
+    </button>
+  </div>
+</div>

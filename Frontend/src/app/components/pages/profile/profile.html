@@ -1,0 +1,70 @@
+<div class="page-container">
+  <h2>👤 {{ 'PROFILE.TITLE' | translate }}</h2>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner-lg"></div>
+      <p>{{ 'PROFILE.LOADING' | translate }}</p>
+    </div>
+  } @else {
+    <div class="profile-layout">
+      <!-- Info card -->
+      <div class="info-card">
+        <div class="avatar">{{ name.charAt(0).toUpperCase() }}</div>
+        <div class="user-meta">
+          <div class="meta-row">
+            <span class="meta-label">{{ 'PROFILE.ROLE' | translate }}:</span>
+            <span class="role-badge" [class.admin]="role === 1">{{ getRoleKey() | translate }}</span>
+          </div>
+          @if (createdAt) {
+            <div class="meta-row">
+              <span class="meta-label">{{ 'PROFILE.MEMBER_SINCE' | translate }}:</span>
+              <span>{{ createdAt | date:'dd.MM.yyyy' }}</span>
+            </div>
+          }
+          <div class="meta-row">
+            <span class="status-dot" [class.active]="isActive"></span>
+            <span>{{ isActive ? 'Активний' : 'Заблокований' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Edit form -->
+      <div class="profile-form">
+        @if (error()) {
+          <div class="alert error">{{ error() | translate }}</div>
+        }
+        @if (success()) {
+          <div class="alert success">{{ success() | translate }}</div>
+        }
+
+        <div class="form-group">
+          <label>{{ 'PROFILE.NAME_LABEL' | translate }}</label>
+          <input type="text" [(ngModel)]="name" [disabled]="isSaving()" [placeholder]="'PROFILE.NAME_LABEL' | translate">
+        </div>
+
+        <div class="form-group">
+          <label>{{ 'PROFILE.EMAIL_LABEL' | translate }}</label>
+          <input type="email" [(ngModel)]="email" [disabled]="isSaving()">
+          <small class="hint">{{ 'PROFILE.EMAIL_NOTE' | translate }}</small>
+        </div>
+        
+        <div class="form-group">
+          <label>{{ 'PROFILE.TIMEZONE_LABEL' | translate }}</label>
+          <select [(ngModel)]="selectedTimezone" [disabled]="isSaving()">
+            @for (tz of timezones; track tz) {
+              <option [value]="tz">{{ tz }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="profile-actions">
+          <button class="btn-save" (click)="save()" [disabled]="isSaving()">
+            {{ isSaving() ? ('PROFILE.SAVING' | translate) : ('PROFILE.SAVE_BTN' | translate) }}
+          </button>
+          <button class="btn-delete" (click)="deleteAccount()">{{ 'PROFILE.DELETE_ACCOUNT' | translate }}</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

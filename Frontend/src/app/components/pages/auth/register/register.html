@@ -1,0 +1,39 @@
+<div class="auth-container">
+  <div class="auth-top-actions">
+    <app-theme-toggle></app-theme-toggle>
+    <app-language-switcher></app-language-switcher>
+  </div>
+  <div class="auth-card">
+    <div class="brand-icon">🌱 PlantIQ</div>
+    <h2>{{ 'AUTH.REGISTER_TITLE' | translate }}</h2>
+    <p>{{ 'AUTH.REGISTER_SUBTITLE' | translate }}</p>
+
+    @if (errorMessage()) {
+    <div class="error-alert">{{ errorMessage() | translate }}</div>
+    }
+
+    <div class="form-group">
+      <label>{{ 'AUTH.NAME_LABEL' | translate }}</label>
+      <input type="text" placeholder="Іван" [(ngModel)]="name" [disabled]="isLoading()">
+    </div>
+    <div class="form-group">
+      <label>{{ 'AUTH.EMAIL_LABEL' | translate }}</label>
+      <input type="email" placeholder="admin@plantiq.com" [(ngModel)]="email" [disabled]="isLoading()">
+    </div>
+    <div class="form-group">
+      <label>{{ 'AUTH.PASSWORD_LABEL' | translate }}</label>
+      <input type="password" placeholder="••••••••" [(ngModel)]="password" [disabled]="isLoading()">
+    </div>
+
+    <button class="primary-btn" (click)="register()" [disabled]="isLoading()">
+      @if (isLoading()) {
+      <span class="spinner"></span> {{ 'AUTH.REGISTER_LOADING' | translate }}
+      } @else {
+      {{ 'AUTH.REGISTER_BTN' | translate }}
+      }
+    </button>
+    <div class="auth-links">
+      <a routerLink="/login">{{ 'AUTH.HAS_ACCOUNT' | translate }}</a>
+    </div>
+  </div>
+</div>

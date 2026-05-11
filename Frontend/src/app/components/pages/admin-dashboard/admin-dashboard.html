@@ -1,0 +1,71 @@
+<div class="admin-page">
+  <h1>📊 {{ 'ADMIN.TITLE' | translate }}</h1>
+  <p class="sub">{{ 'ADMIN.MANAGE_DATA' | translate }}</p>
+
+  @if (error()) { <div class="alert error">{{ error() | translate }}</div> }
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <div class="spinner-lg"></div>
+      <p>{{ 'PROFILE.LOADING' | translate }}</p>
+    </div>
+  } @else if (stats(); as s) {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div>
+          <div class="stat-value">{{ s.totalUsers }}</div>
+          <div class="stat-label">{{ 'ADMIN.TOTAL_USERS' | translate }}</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🌿</div>
+        <div>
+          <div class="stat-value">{{ s.totalPlants }}</div>
+          <div class="stat-label">{{ 'ADMIN.TOTAL_PLANTS' | translate }}</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📡</div>
+        <div>
+          <div class="stat-value">{{ s.totalDevices }}</div>
+          <div class="stat-label">{{ 'ADMIN.TOTAL_DEVICES' | translate }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quick-links">
+      <h3>{{ 'ADMIN.MANAGE_DATA' | translate }}</h3>
+      <div class="links-grid">
+        <a routerLink="/admin/users" class="link-card">
+          <span class="l-icon">👥</span>
+          <div>
+            <strong>{{ 'ADMIN.MANAGE_USERS' | translate }}</strong>
+            <p>Управління обліковими записами</p>
+          </div>
+        </a>
+        <a routerLink="/admin/notifications" class="link-card">
+          <span class="l-icon">📣</span>
+          <div>
+            <strong>{{ 'ADMIN.NOTIF_TITLE' | translate }}</strong>
+            <p>{{ 'ADMIN.NOTIF_SUB' | translate }}</p>
+          </div>
+        </a>
+        <a routerLink="/admin/settings" class="link-card">
+          <span class="l-icon">⚙️</span>
+          <div>
+            <strong>{{ 'ADMIN.SETTINGS_TITLE' | translate }}</strong>
+            <p>Параметри системи</p>
+          </div>
+        </a>
+        <a routerLink="/admin/export" class="link-card">
+          <span class="l-icon">💾</span>
+          <div>
+            <strong>{{ 'ADMIN.BACKUPS' | translate }}</strong>
+            <p>Експорт JSON та CSV</p>
+          </div>
+        </a>
+      </div>
+    </div>
+  }
+</div>

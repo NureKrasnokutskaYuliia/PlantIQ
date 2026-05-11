@@ -1,0 +1,183 @@
+<div class="page-header">
+  <h2>🌿 {{ 'PLANTS.TITLE' | translate }}</h2>
+  <button class="btn-primary" (click)="showAddForm.set(!showAddForm())">
+    {{ showAddForm() ? '✕ ' + ('PLANTS.CANCEL_BTN' | translate) : '+ ' + ('PLANTS.ADD_BTN' | translate) }}
+  </button>
+</div>
+
+@if (error()) {
+  <div class="alert error">{{ error() | translate }}</div>
+}
+
+@if (showAddForm()) {
+  <div class="add-form-card">
+    <h3>{{ 'PLANTS.NEW_PLANT' | translate }}</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>{{ 'PLANTS.NAME' | translate }} *</label>
+        <input [(ngModel)]="newPlant.name" placeholder="Монстера">
+      </div>
+      <div class="form-group">
+        <label>{{ 'PLANTS.SPECIES' | translate }}</label>
+        <input [(ngModel)]="newPlant.species" placeholder="Monstera deliciosa">
+      </div>
+      <div class="form-group">
+        <label>{{ 'PLANTS.DEVICE' | translate }}</label>
+        <select [(ngModel)]="newPlant.deviceId">
+          <option [ngValue]="undefined">— Без пристрою —</option>
+          @for (d of devices(); track d.deviceId) {
+            <option [ngValue]="d.deviceId">{{ d.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-group">
+        <label>{{ 'PLANTS.MODE' | translate }}</label>
+        <select [(ngModel)]="newPlant.wateringMode">
+          <option [ngValue]="0">{{ 'PLANTS.MODE_MANUAL' | translate }}</option>
+          <option [ngValue]="1">{{ 'PLANTS.MODE_AUTO' | translate }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>{{ 'PLANTS.MOISTURE_MIN' | translate }}</label>
+        <input type="number" [(ngModel)]="newPlant.optimalMoistureMin">
+      </div>
+      <div class="form-group">
+        <label>{{ 'PLANTS.MOISTURE_MAX' | translate }}</label>
+        <input type="number" [(ngModel)]="newPlant.optimalMoistureMax">
+      </div>
+    </div>
+    <div class="form-group full">
+      <label>{{ 'PLANTS.NOTES' | translate }}</label>
+      <textarea [(ngModel)]="newPlant.notes" rows="2" placeholder="..."></textarea>
+    </div>
+    <button class="btn-primary" (click)="addPlant()">{{ 'PLANTS.SAVE' | translate }}</button>
+  </div>
+}
+
+@if (isLoading()) {
+  <div class="loading-state">
+    <div class="spinner-lg"></div>
+    <p>Завантаження рослин...</p>
+  </div>
+} @else if (plants().length === 0) {
+  <div class="empty-state">
+    <div class="empty-icon">🌱</div>
+    <h3>{{ 'PLANTS.EMPTY' | translate }}</h3>
+    <p>{{ 'PLANTS.EMPTY_SUB' | translate }}</p>
+  </div>
+} @else {
+  <div class="plants-grid">
+    @for (plant of plants(); track plant.plantId) {
+      <div class="plant-card" [class.inactive]="!plant.isActive">
+        <div class="plant-card-header">
+          <div class="plant-name-block">
+            <span class="plant-emoji">🪴</span>
+            <div>
+              <h3>{{ plant.name }}</h3>
+              <span class="plant-species">{{ plant.species || 'Вид не вказано' }}</span>
+            </div>
+          </div>
+          <div class="plant-actions">
+            <button class="btn-icon edit" (click)="startEdit(plant)" title="Редагувати">✏️</button>
+            <button class="btn-icon danger" (click)="deletePlant(plant.plantId)" title="Видалити">🗑️</button>
+          </div>
+        </div>
+
+        <div class="plant-sensors">
+          @let sensor = sensorMap()[plant.plantId];
+          @if (sensor) {
+            <div class="sensor-row">
+              <div class="sensor-item" [class]="'status-' + getMoistureStatus(plant, sensor)">
+                <span class="sensor-label">💧 {{ 'PLANTS.MOISTURE' | translate }}</span>
+                <span class="sensor-value">{{ sensor.soilMoisture | number:'1.0-1' }}%</span>
+                <span class="sensor-status">{{ getMoistureLabel(getMoistureStatus(plant, sensor)) }}</span>
+              </div>
+              <div class="sensor-item">
+                <span class="sensor-label">☀️ {{ 'PLANTS.LIGHT' | translate }}</span>
+                <span class="sensor-value">{{ sensor.lightIntensity | number:'1.0-0' }} лк</span>
+              </div>
+              @if (sensor.batteryLevel) {
+                <div class="sensor-item">
+                  <span class="sensor-label">🔋 {{ 'PLANTS.BATTERY' | translate }}</span>
+                  <span class="sensor-value">{{ sensor.batteryLevel }}%</span>
+                </div>
+              }
+              <div class="sensor-time">
+                {{ 'PLANTS.UPDATED' | translate }}: {{ sensor.timestamp | date:'dd.MM.yyyy HH:mm' }}
+              </div>
+            </div>
+          } @else {
+            <div class="no-sensor">
+              @if (plant.deviceId) {
+                <span>⏳ {{ 'PLANTS.WAIT_DATA' | translate }}</span>
+              } @else {
+                <span>📡 {{ 'PLANTS.NO_SENSOR' | translate }}</span>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="plant-meta">
+          <span>📡 {{ 'PLANTS.DEVICE' | translate }}: {{ getDeviceName(plant.deviceId) }}</span>
+          <span>💦 {{ 'WATERING.SUBTITLE' | translate }}: {{ plant.optimalMoistureMin }}–{{ plant.optimalMoistureMax }}%</span>
+          <span>{{ plant.wateringMode === 0 ? ('PLANTS.MODE_MANUAL' | translate) : ('PLANTS.MODE_AUTO' | translate) }}</span>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<!-- Edit Modal -->
+@if (editingPlant()) {
+  <div class="modal-overlay" (click)="cancelEdit()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>✏️ Редагувати: {{ editingPlant()!.name }}</h3>
+        <button class="modal-close" (click)="cancelEdit()">✕</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Назва *</label>
+          <input [(ngModel)]="editForm.name">
+        </div>
+        <div class="form-group">
+          <label>Вид</label>
+          <input [(ngModel)]="editForm.species">
+        </div>
+        <div class="form-group">
+          <label>Пристрій</label>
+          <select [(ngModel)]="editForm.deviceId">
+            <option [ngValue]="undefined">— Без пристрою —</option>
+            @for (d of devices(); track d.deviceId) {
+              <option [ngValue]="d.deviceId">{{ d.name }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Режим поливу</label>
+          <select [(ngModel)]="editForm.wateringMode">
+            <option [ngValue]="0">Ручний</option>
+            <option [ngValue]="1">Автоматичний</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Вологість мін. (%)</label>
+          <input type="number" [(ngModel)]="editForm.optimalMoistureMin">
+        </div>
+        <div class="form-group">
+          <label>Вологість макс. (%)</label>
+          <input type="number" [(ngModel)]="editForm.optimalMoistureMax">
+        </div>
+      </div>
+      <div class="form-group full">
+        <label>Нотатки</label>
+        <textarea [(ngModel)]="editForm.notes" rows="2"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="cancelEdit()">Скасувати</button>
+        <button class="btn-primary" (click)="saveEdit()">💾 Зберегти</button>
+      </div>
+    </div>
+  </div>
+}
+

@@ -10,11 +10,13 @@ namespace API.Services
     {
         private readonly AppDbContext _context;
         private readonly IFirebaseService _firebaseService;
+        private readonly ILogger<AdminService> _logger;
 
-        public AdminService(AppDbContext context, IFirebaseService firebaseService)
+        public AdminService(AppDbContext context, IFirebaseService firebaseService, ILogger<AdminService> logger)
         {
             _context = context;
             _firebaseService = firebaseService;
+            _logger = logger;
         }
 
         public async Task<API.DTOs.SystemStatisticsDto> GetSystemStatisticsAsync()
@@ -58,8 +60,8 @@ namespace API.Services
             }
 
             var users = await _context.Users.Where(u => u.IsActive).ToListAsync();
+            _logger.LogInformation("Sending global notification to {Count} active users.", users.Count);
             
-            // 1. Зберігаємо в базу даних для внутрішнього перегляду
             var notifications = users.Select(u => new Notification
             {
                 UserId = u.UserId,
@@ -73,14 +75,24 @@ namespace API.Services
             _context.Notifications.AddRange(notifications);
             await _context.SaveChangesAsync();
 
-            // 2. Відправляємо реальні PUSH сповіщення через Firebase
-            foreach (var user in users.Where(u => !string.IsNullOrEmpty(u.FcmToken)))
+            var usersWithToken = users.Where(u => !string.IsNullOrEmpty(u.FcmToken)).ToList();
+            _logger.LogInformation("Found {Count} users with FCM tokens.", usersWithToken.Count);
+
+            foreach (var user in usersWithToken)
             {
-                await _firebaseService.SendNotificationAsync(
-                    user.FcmToken!,
-                    "PlantIQ Global Alert",
-                    message
-                );
+                try 
+                {
+                    await _firebaseService.SendNotificationAsync(
+                        user.FcmToken!,
+                        "PlantIQ Global Alert",
+                        message
+                    );
+                    _logger.LogInformation("Successfully sent push to User ID: {UserId}", user.UserId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to send push to User ID: {UserId}", user.UserId);
+                }
             }
         }
     }

@@ -1,0 +1,44 @@
+<div class="page">
+  <h2>🌿 {{ 'ADMIN.MANAGE_DATA' | translate }}</h2>
+  <p class="sub">{{ 'ADMIN.TITLE' | translate }} — {{ 'ADMIN.MANAGE_DATA' | translate }}</p>
+
+  @if (isLoading()) {
+    <div class="loader"><div class="spinner"></div></div>
+  } @else if (stats(); as s) {
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-val">{{ s.totalUsers }}</div>
+        <div class="stat-name">Всього користувачів</div>
+        <div class="stat-detail">Активних: {{ s.activeUsers }}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🌿</div>
+        <div class="stat-val">{{ s.totalPlants }}</div>
+        <div class="stat-name">Рослин у системі</div>
+        <div class="stat-detail">На всіх акаунтах</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📡</div>
+        <div class="stat-val">{{ s.totalDevices }}</div>
+        <div class="stat-name">IoT-пристроїв</div>
+        <div class="stat-detail">Онлайн: {{ s.onlineDevices }}</div>
+      </div>
+      <div class="stat-card highlight">
+        <div class="stat-icon">✅</div>
+        <div class="stat-val">{{ s.activeUsers }}</div>
+        <div class="stat-name">Active</div>
+        <div class="stat-detail">Status: Active = true</div>
+      </div>
+    </div>
+
+    <div class="info-panel">
+      <h3>ℹ️ Про дані</h3>
+      <ul>
+        <li>Дані рослин і пристроїв належать кожному окремому користувачу і зберігаються у базі Neon (PostgreSQL).</li>
+        <li>Показники IoT-датчиків (вологість ґрунту, освітленість) надходять в реальному часі.</li>
+        <li>Для детального перегляду/видалення конкретних записів використовуйте сторінку <strong>Управління користувачами</strong>.</li>
+      </ul>
+    </div>
+  }
+</div>

@@ -1,0 +1,77 @@
+<div class="page-header">
+  <h2>📊 {{ 'ANALYTICS.TITLE' | translate }}</h2>
+  <p class="sub">{{ 'ANALYTICS.SUBTITLE' | translate }}</p>
+</div>
+
+@if (error()) { <div class="alert error">{{ error() | translate }}</div> }
+
+@if (isLoading()) {
+  <div class="loading"><div class="spinner"></div></div>
+} @else if (plantStats().length === 0) {
+  <div class="empty-state">
+    <div class="empty-icon">📊</div>
+    <p>{{ 'PLANTS.EMPTY' | translate }}</p>
+  </div>
+} @else {
+  <div class="plants-analytics">
+    @for (s of plantStats(); track s.plant.plantId) {
+      <div class="analytics-card">
+        <div class="card-header">
+          <span class="plant-emoji">🪴</span>
+          <div>
+            <h3>{{ s.plant.name }}</h3>
+            <span class="species">{{ s.plant.species || 'Вид не вказано' }}</span>
+          </div>
+          @if (s.readings > 0) {
+            <span class="readings-badge">{{ s.readings }} {{ 'ANALYTICS.READINGS' | translate }}</span>
+          }
+        </div>
+
+        @if (!s.plant.deviceId) {
+          <div class="no-sensor">📡 {{ 'PLANTS.NO_SENSOR' | translate }}</div>
+        } @else if (s.readings === 0) {
+          <div class="no-sensor">⏳ {{ 'PLANTS.WAIT_DATA' | translate }}</div>
+        } @else {
+          <div class="metrics-grid">
+            <!-- Soil Moisture -->
+            <div class="metric-card" [class]="'status-' + getMoistureStatus(s.plant, s.avgMoisture)">
+              <div class="metric-icon">💧</div>
+              <div class="metric-name">{{ 'PLANTS.MOISTURE' | translate }}</div>
+              <div class="metric-value">{{ s.avgMoisture | number:'1.0-1' }}<span class="unit">%</span></div>
+              <div class="metric-range">{{ 'ANALYTICS.NORMAL_RANGE' | translate }}: {{ s.plant.optimalMoistureMin }}–{{ s.plant.optimalMoistureMax }}%</div>
+              <div class="moisture-bar">
+                <div class="bar-fill" [style.width.%]="(s.avgMoisture ?? 0) > 100 ? 100 : (s.avgMoisture ?? 0)"></div>
+              </div>
+            </div>
+
+            <!-- Light -->
+            <div class="metric-card">
+              <div class="metric-icon">☀️</div>
+              <div class="metric-name">{{ 'PLANTS.LIGHT' | translate }}</div>
+              <div class="metric-value">{{ s.avgLight | number:'1.0-0' }}<span class="unit">лк</span></div>
+              @if (s.plant.optimalLightMin && s.plant.optimalLightMax) {
+                <div class="metric-range">{{ 'ANALYTICS.NORMAL_RANGE' | translate }}: {{ s.plant.optimalLightMin }}–{{ s.plant.optimalLightMax }} лк</div>
+              }
+            </div>
+
+            <!-- Latest reading -->
+            @if (s.latest) {
+              <div class="metric-card last">
+                <div class="metric-icon">🕐</div>
+                <div class="metric-name">{{ 'ANALYTICS.LATEST' | translate }}</div>
+                <div class="last-values">
+                  <div>💧 {{ s.latest.soilMoisture | number:'1.0-1' }}%</div>
+                  <div>☀️ {{ s.latest.lightIntensity | number:'1.0-0' }} лк</div>
+                  @if (s.latest.batteryLevel) {
+                    <div>🔋 {{ s.latest.batteryLevel }}%</div>
+                  }
+                </div>
+                <div class="metric-range">{{ s.latest.timestamp | date:'dd.MM.yyyy HH:mm' }}</div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

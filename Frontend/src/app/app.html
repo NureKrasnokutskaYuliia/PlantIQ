@@ -1,0 +1,16 @@
+<router-outlet></router-outlet>
+
+@if (auth.showSessionWarning()) {
+  <div class="session-modal-overlay">
+    <div class="session-modal-card">
+      <div class="session-icon">⏳</div>
+      <h3>Сесія скоро закінчиться</h3>
+      <p>Час вашої сесії добігає кінця. Хочете залишитися в системі чи вийти?</p>
+      
+      <div class="session-actions">
+        <button class="btn-logout" (click)="logout()">🚪 Вийти зараз</button>
+        <button class="btn-stay" (click)="auth.extendSession()">Залишитись</button>
+      </div>
+    </div>
+  </div>
+}

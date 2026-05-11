@@ -1,0 +1,167 @@
+.page {
+    h2 {
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+    }
+
+    .sub {
+        color: var(--text-secondary);
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+    }
+}
+
+.notif-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    max-width: 680px;
+}
+
+.alert {
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+
+    &.error {
+        background: #fef2f2;
+        border-left: 4px solid #ef4444;
+        color: #b91c1c;
+    }
+
+    &.success {
+        background: #f0fdf4;
+        border-left: 4px solid #16a34a;
+        color: #15803d;
+    }
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+
+    label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 0.4rem;
+    }
+
+    input,
+    textarea {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+        width: 100%;
+        padding: 0.7rem 0.9rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.95rem;
+
+        &:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+    }
+
+    textarea {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+        resize: vertical;
+        font-family: inherit;
+    }
+
+    input:disabled,
+    textarea:disabled {
+        background: var(--bg-primary);
+    }
+}
+
+.preview {
+    margin: 1.25rem 0;
+}
+
+.preview-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.notif-bubble {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    background: var(--text-primary);
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    color: white;
+}
+
+.notif-icon {
+    font-size: 1.75rem;
+}
+
+.notif-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.notif-body {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.btn-send {
+    width: 100%;
+    padding: 0.85rem;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+
+    &:hover:not(:disabled) {
+        background: #2563eb;
+    }
+
+    &:disabled {
+        background: #93c5fd;
+        cursor: not-allowed;
+    }
+}
+
+.spinner {
+    width: 1.1rem;
+    height: 1.1rem;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.info-box {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
