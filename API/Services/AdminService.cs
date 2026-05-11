@@ -3,6 +3,7 @@ using API.Models;
 using API.DTOs;
 using API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace API.Services
 {
@@ -39,6 +40,7 @@ namespace API.Services
             {
                 user.IsActive = false;
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("User {UserId} has been banned.", userId);
             }
         }
 
@@ -49,6 +51,7 @@ namespace API.Services
             {
                 user.IsActive = true;
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("User {UserId} has been unbanned.", userId);
             }
         }
 
@@ -59,9 +62,11 @@ namespace API.Services
                 priority = NotificationPriority.Normal;
             }
 
+            // Отримуємо всіх активних користувачів
             var users = await _context.Users.Where(u => u.IsActive).ToListAsync();
-            _logger.LogInformation("Sending global notification to {Count} active users.", users.Count);
-            
+            _logger.LogInformation("Starting global notification broadcast to {Count} active users.", users.Count);
+
+            // 1. Зберігаємо в базу даних для внутрішньої історії (щоб користувач бачив сповіщення в додатку)
             var notifications = users.Select(u => new Notification
             {
                 UserId = u.UserId,
@@ -74,25 +79,32 @@ namespace API.Services
 
             _context.Notifications.AddRange(notifications);
             await _context.SaveChangesAsync();
+            _logger.LogInformation("Notifications saved to database for {Count} users.", users.Count);
 
+            // 2. Відправляємо реальні PUSH через Firebase тим, у кого є токен
             var usersWithToken = users.Where(u => !string.IsNullOrEmpty(u.FcmToken)).ToList();
-            _logger.LogInformation("Found {Count} users with FCM tokens.", usersWithToken.Count);
+            _logger.LogInformation("Found {Count} users with valid FCM device tokens.", usersWithToken.Count);
 
             foreach (var user in usersWithToken)
             {
-                try 
+                try
                 {
                     await _firebaseService.SendNotificationAsync(
                         user.FcmToken!,
                         "PlantIQ Global Alert",
                         message
                     );
-                    _logger.LogInformation("Successfully sent push to User ID: {UserId}", user.UserId);
+                    _logger.LogInformation("Push sent successfully to User ID: {UserId}", user.UserId);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Failed to send push to User ID: {UserId}", user.UserId);
+                    _logger.LogError(ex, "Failed to send push notification to User ID: {UserId}. Error: {Message}", user.UserId, ex.Message);
                 }
+            }
+
+            if (usersWithToken.Count == 0)
+            {
+                _logger.LogWarning("Global notification sent to 0 devices because no FCM tokens were found in the database. Ask users to Re-Login in the mobile app.");
             }
         }
     }

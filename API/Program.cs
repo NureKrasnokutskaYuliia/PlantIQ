@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace API
@@ -39,18 +40,24 @@ namespace API
             {
                 if (!string.IsNullOrEmpty(firebaseConfigJson))
                 {
-                    FirebaseAdmin.FirebaseApp.Create(new FirebaseAdmin.AppOptions()
+                    using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(firebaseConfigJson)))
                     {
-                        Credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromJson(firebaseConfigJson)
-                    });
+                        FirebaseAdmin.FirebaseApp.Create(new FirebaseAdmin.AppOptions()
+                        {
+                            Credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromStream(stream)
+                        });
+                    }
                     Console.WriteLine("Firebase: Successfully initialized from ENVIRONMENT VARIABLE.");
                 }
                 else if (File.Exists(firebaseKeyPath))
                 {
-                    FirebaseAdmin.FirebaseApp.Create(new FirebaseAdmin.AppOptions()
+                    using (var stream = new FileStream(firebaseKeyPath, FileMode.Open, FileAccess.Read))
                     {
-                        Credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromFile(firebaseKeyPath)
-                    });
+                        FirebaseAdmin.FirebaseApp.Create(new FirebaseAdmin.AppOptions()
+                        {
+                            Credential = Google.Apis.Auth.OAuth2.GoogleCredential.FromStream(stream)
+                        });
+                    }
                     Console.WriteLine("Firebase: Successfully initialized from JSON FILE.");
                 }
                 else
@@ -178,19 +185,19 @@ namespace API
             app.MapControllers();
 
             using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
                 {
-                    var services = scope.ServiceProvider;
-                    try
-                    {
-                        var context = services.GetRequiredService<AppDbContext>();
-                        context.Database.Migrate(); 
-                        Console.WriteLine("Migrations applied successfully to Neon!");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Migration error: {ex.Message}");
-                    }
+                    var context = services.GetRequiredService<AppDbContext>();
+                    context.Database.Migrate();
+                    Console.WriteLine("Migrations applied successfully to Neon!");
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Migration error: {ex.Message}");
+                }
+            }
 
             app.Run();
         }
