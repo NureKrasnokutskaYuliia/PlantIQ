@@ -1,5 +1,6 @@
 using API.Data;
 using API.Models;
+using API.DTOs;
 using API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,9 +15,9 @@ namespace API.Services
             _context = context;
         }
 
-        public async Task<SystemStatsDto> GetSystemStatisticsAsync()
+        public async Task<API.DTOs.SystemStatisticsDto> GetSystemStatisticsAsync()
         {
-            return new SystemStatsDto
+            return new API.DTOs.SystemStatisticsDto
             {
                 TotalUsers = await _context.Users.CountAsync(),
                 TotalDevices = await _context.Devices.CountAsync(),

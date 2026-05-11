@@ -1,4 +1,5 @@
-﻿using API.Services.Interfaces;
+using API.Services.Interfaces;
+using API.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,8 +27,8 @@ namespace API.Controllers
         /// <returns>System statistics DTO</returns>
         /// <response code="200">Successfully returned statistics</response>
         [HttpGet("stats")]
-        [ProducesResponseType(typeof(SystemStatsDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<SystemStatsDto>> GetStats()
+        [ProducesResponseType(typeof(SystemStatisticsDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<SystemStatisticsDto>> GetStats()
         {
             var stats = await _adminService.GetSystemStatisticsAsync();
             return Ok(stats);
