@@ -2,7 +2,7 @@ package com.plantiq.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.plantiq.data.api.ApiClient
+import com.plantiq.data.remote.ApiClient
 import com.plantiq.data.model.CreateWateringScheduleDto
 import com.plantiq.data.model.WateringEventResponseDto
 import com.plantiq.data.model.WateringScheduleResponseDto

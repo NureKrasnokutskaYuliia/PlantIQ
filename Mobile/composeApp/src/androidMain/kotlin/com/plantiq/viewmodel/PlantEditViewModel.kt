@@ -2,7 +2,7 @@ package com.plantiq.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.plantiq.data.api.ApiClient
+import com.plantiq.data.remote.ApiClient
 import com.plantiq.data.model.CreatePlantDto
 import com.plantiq.data.model.DeviceResponseDto
 import com.plantiq.data.model.PlantResponseDto

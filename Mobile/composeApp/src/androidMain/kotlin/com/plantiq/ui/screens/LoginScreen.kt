@@ -14,8 +14,8 @@ import com.plantiq.viewmodel.AuthState
 import com.plantiq.viewmodel.AuthViewModel
 
 import androidx.compose.ui.platform.LocalContext
-import com.plantiq.data.model.TokenManager
-import com.plantiq.data.api.ApiClient
+import com.plantiq.data.local.TokenManager
+import com.plantiq.data.remote.ApiClient
 
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll

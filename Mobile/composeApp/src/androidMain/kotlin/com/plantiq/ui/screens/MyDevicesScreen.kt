@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.plantiq.data.model.TokenManager
-import com.plantiq.data.api.ApiClient
+import com.plantiq.data.local.TokenManager
+import com.plantiq.data.remote.ApiClient
 import com.plantiq.data.model.DeviceResponseDto
 import io.ktor.client.call.body
 import kotlinx.coroutines.flow.MutableStateFlow

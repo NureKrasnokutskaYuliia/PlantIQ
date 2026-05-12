@@ -15,8 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import com.plantiq.data.model.TokenManager
-import com.plantiq.data.api.ApiClient
+import com.plantiq.data.local.TokenManager
+import com.plantiq.data.remote.ApiClient
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.launch
 import androidx.lifecycle.lifecycleScope
@@ -55,21 +55,39 @@ class MainActivity : ComponentActivity() {
             val tokenManager = remember { TokenManager(context) }
             
             val startDestination = produceState<String?>(initialValue = null) {
-                tokenManager.tokenFlow.collect { token ->
-                    val lastTime = tokenManager.lastActivityTimeFlow.firstOrNull() ?: 0L
+                kotlinx.coroutines.flow.combine(
+                    tokenManager.tokenFlow,
+                    tokenManager.lastActivityTimeFlow
+                ) { token, lastTime ->
                     val currentTime = System.currentTimeMillis()
-                    
-                    val timeoutMillis = 1 * 60 * 60 * 1000L 
+                    val timeoutMillis = 60 * 60 * 1000L // 1 година
 
                     if (token.isNullOrEmpty()) {
-                        value = "login"
-                    } else if (lastTime != 0L && (currentTime - lastTime) > timeoutMillis) {
+                        "login"
+                    } else if (lastTime != null && lastTime != 0L && (currentTime - lastTime) > timeoutMillis) {
                         tokenManager.clearSession()
-                        value = "login"
+                        "login"
                     } else {
                         ApiClient.token = token
-                        tokenManager.updateLastActivityTime()
-                        value = "plants_list"
+                        "plants_list"
+                    }
+                }.collect { dest ->
+                    value = dest
+                }
+            }
+
+            // Фонова перевірка сесії кожні 30 секунд
+            LaunchedEffect(startDestination.value) {
+                if (startDestination.value == "plants_list") {
+                    while (true) {
+                        kotlinx.coroutines.delay(30000)
+                        val lastTime = tokenManager.lastActivityTimeFlow.firstOrNull() ?: 0L
+                        val currentTime = System.currentTimeMillis()
+                        val timeoutMillis = 60 * 60 * 1000L 
+
+                        if (lastTime != 0L && (currentTime - lastTime) > timeoutMillis) {
+                            tokenManager.clearSession()
+                        }
                     }
                 }
             }

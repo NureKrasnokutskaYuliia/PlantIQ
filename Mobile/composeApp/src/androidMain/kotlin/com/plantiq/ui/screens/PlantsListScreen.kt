@@ -26,9 +26,12 @@ fun PlantsListScreen(
     onPlantClick: (PlantResponseDto) -> Unit,
     viewModel: PlantsViewModel = viewModel()
 ) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val tokenManager = remember { com.plantiq.data.local.TokenManager(context) }
     val plantsState by viewModel.plantsState.collectAsState()
 
     LaunchedEffect(Unit) {
+        tokenManager.updateLastActivityTime()
         viewModel.loadPlants()
     }
 
@@ -145,7 +148,7 @@ fun PlantItemCard(plant: PlantResponseDto, onClick: () -> Unit, onEdit: () -> Un
                 if (plant.deviceId != null) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "📡 Пристрій: #${plant.deviceId}",
+                        text = "📡 Пристрій підключено",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )

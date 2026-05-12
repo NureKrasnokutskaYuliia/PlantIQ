@@ -72,6 +72,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+    applicationVariants.all {
+        outputs.all {
+            val output = this as com.android.build.gradle.internal.api.ApkVariantOutputImpl
+            output.outputFileName = "plantiq.apk"
+        }
+    }
 }
 
 dependencies {

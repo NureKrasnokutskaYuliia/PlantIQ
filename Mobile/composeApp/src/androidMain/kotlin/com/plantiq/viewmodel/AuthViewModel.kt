@@ -2,7 +2,7 @@ package com.plantiq.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.plantiq.data.api.ApiClient
+import com.plantiq.data.remote.ApiClient
 import com.plantiq.data.model.LoginRequestDto
 import com.plantiq.data.model.UserResponseDto
 import com.plantiq.data.model.LoginResponseDto
@@ -33,7 +33,6 @@ class AuthViewModel : ViewModel() {
                     val body: LoginResponseDto = response.body()
                     ApiClient.token = body.token
                     
-                    // Відправляємо FCM токен на сервер
                     com.google.firebase.messaging.FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val fcmToken = task.result

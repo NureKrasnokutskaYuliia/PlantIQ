@@ -10,15 +10,30 @@
 **/bin/
 **/obj/
 out/
+dist/
+**/node_modules/
+.angular/
 
 # Secrets and Sensitive Data
-/API/firebase-server-key.json
-/API/appsettings.Development.json
-/API/appsettings.json
+**/firebase-server-key.json
+**/google-services.json
+**/firebase-auth.json
+API/appsettings.Development.json
 *.pfx
 *.p12
 *.pem
 *.key
+.env
+.env.*
+!.env.example
+
+# AI / Antigravity Tools
+.gemini/
+.gemini_history/
+**/brain/
+**/artifacts/
+**/logs/
+**/scratch/
 
 # Databases
 *.db
@@ -32,3 +47,6 @@ Thumbs.db
 
 # Project specific
 **/.git
+**/.dockerignore
+Dockerfile
+docker-compose*

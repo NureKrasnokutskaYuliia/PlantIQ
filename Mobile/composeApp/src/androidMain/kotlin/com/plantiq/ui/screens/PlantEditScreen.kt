@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.plantiq.data.model.TokenManager
+import com.plantiq.data.local.TokenManager
 import com.plantiq.data.model.PlantResponseDto
 import com.plantiq.viewmodel.PlantEditState
 import com.plantiq.viewmodel.PlantEditViewModel

@@ -2,7 +2,7 @@ package com.plantiq.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.plantiq.data.api.ApiClient
+import com.plantiq.data.remote.ApiClient
 import com.plantiq.data.model.SensorDataResponseDto
 import io.ktor.client.call.body
 import kotlinx.coroutines.flow.MutableStateFlow

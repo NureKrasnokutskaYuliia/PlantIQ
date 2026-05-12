@@ -2,8 +2,8 @@ package com.plantiq.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.plantiq.data.model.TokenManager
-import com.plantiq.data.api.ApiClient
+import com.plantiq.data.local.TokenManager
+import com.plantiq.data.remote.ApiClient
 import com.plantiq.data.model.UpdateUserDto
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

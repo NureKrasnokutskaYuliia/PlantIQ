@@ -1,23 +1,23 @@
 import { Routes } from '@angular/router';
-import { AdminLayout } from './components/layout/admin-layout/admin-layout';
-import { UserLayout } from './components/layout/user-layout/user-layout';
+import { AdminLayout } from './shared/layout/admin-layout/admin-layout';
+import { UserLayout } from './shared/layout/user-layout/user-layout';
 
-import { AdminDashboard } from './components/pages/admin-dashboard/admin-dashboard';
-import { AdminUsers } from './components/pages/admin-users/admin-users';
-import { AdminData } from './components/pages/admin-data/admin-data';
-import { AdminNotifications } from './components/pages/admin-notifications/admin-notifications';
-import { AdminSettings } from './components/pages/admin-settings/admin-settings';
-import { AdminExport } from './components/pages/admin-export/admin-export';
+import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
+import { AdminUsers } from './pages/admin-users/admin-users';
+import { AdminData } from './pages/admin-data/admin-data';
+import { AdminNotifications } from './pages/admin-notifications/admin-notifications';
+import { AdminSettings } from './pages/admin-settings/admin-settings';
+import { AdminExport } from './pages/admin-export/admin-export';
 
-import { UserDashboard } from './components/pages/user-dashboard/user-dashboard';
-import { PlantsList } from './components/pages/plants-list/plants-list';
-import { MyDevices } from './components/pages/my-devices/my-devices';
-import { Watering } from './components/pages/watering/watering';
-import { Analytics } from './components/pages/analytics/analytics';
-import { Profile } from './components/pages/profile/profile';
-import { Login } from './components/pages/auth/login/login';
-import { Register } from './components/pages/auth/register/register';
-import { authGuard, adminGuard } from './guards/auth.guard';
+import { UserDashboard } from './pages/user-dashboard/user-dashboard';
+import { PlantsList } from './pages/plants-list/plants-list';
+import { MyDevices } from './pages/my-devices/my-devices';
+import { Watering } from './pages/watering/watering';
+import { Analytics } from './pages/analytics/analytics';
+import { Profile } from './pages/profile/profile';
+import { Login } from './pages/auth/login/login';
+import { Register } from './pages/auth/register/register';
+import { authGuard, adminGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },

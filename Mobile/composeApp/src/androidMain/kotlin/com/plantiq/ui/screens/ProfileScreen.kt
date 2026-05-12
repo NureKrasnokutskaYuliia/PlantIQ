@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.plantiq.data.model.TokenManager
+import com.plantiq.data.local.TokenManager
 import com.plantiq.viewmodel.ProfileState
 import com.plantiq.viewmodel.ProfileViewModel
 
@@ -84,11 +84,6 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                "User ID: #$currentUserId",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
             Text(
                 "Role: ${currentUserRole?.uppercase() ?: "USER"}",
                 style = MaterialTheme.typography.labelSmall,

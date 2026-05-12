@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.plantiq.data.api.ApiClient
+import com.plantiq.data.remote.ApiClient
 import com.plantiq.data.model.PlantResponseDto
 import com.plantiq.data.model.SensorDataResponseDto
 import io.ktor.client.call.body
@@ -25,7 +25,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// ViewModel
 sealed class SensorState {
     object Loading : SensorState()
     object NoData : SensorState()
@@ -43,7 +42,6 @@ class PlantDetailViewModel : ViewModel() {
     fun loadLatest(plantId: Int) {
         viewModelScope.launch {
             _sensorState.value = SensorState.Loading
-            // Artificial delay to make loading visible if network is very fast
             kotlinx.coroutines.delay(500)
             try {
                 val response = ApiClient.api.getSensorData(plantId, limit = 1)
@@ -52,7 +50,6 @@ class PlantDetailViewModel : ViewModel() {
                     if (list.isEmpty()) {
                         _sensorState.value = SensorState.NoData
                     } else {
-                        // Success state update
                         _sensorState.value = SensorState.Success(list.first())
                     }
                 } else {
@@ -68,16 +65,14 @@ class PlantDetailViewModel : ViewModel() {
         viewModelScope.launch {
             _isTesting.value = true
             try {
-                // Send out-of-bounds data to trigger server-side notification
                 val request = com.plantiq.data.model.CreateSensorDataDto(
                     plantId = plantId,
                     deviceId = deviceId,
-                    soilMoisture = 5.0, // Usually low
-                    lightIntensity = 5.0, // Usually low
-                    batteryLevel = 10.0 // Low battery
+                    soilMoisture = 5.0,
+                    lightIntensity = 5.0,
+                    batteryLevel = 10.0
                 )
                 ApiClient.api.createSensorData(request)
-                // Polling worker will pick it up, or user can wait 15 mins
             } catch (_: Exception) {
             } finally {
                 _isTesting.value = false
@@ -133,17 +128,15 @@ fun PlantDetailScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Plant info card
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text("🌿 ${plant.name}", style = MaterialTheme.typography.titleLarge)
                     if (!plant.species.isNullOrBlank()) Text("Вид: ${plant.species}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     if (!plant.notes.isNullOrBlank()) Text("Нотатки: ${plant.notes}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    if (plant.deviceId != null) Text("📡 Пристрій ID: ${plant.deviceId}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                    if (plant.deviceId != null) Text("📡 Пристрій підключено", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
                 }
             }
 
-            // Sensor data
             Text("Керування та Аналітика", style = MaterialTheme.typography.titleMedium)
             
             Row(
