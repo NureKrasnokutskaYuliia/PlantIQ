@@ -182,6 +182,13 @@ namespace API
 
             app.MapGet("/", () => Results.Redirect("/swagger"));
 
+            app.MapGet("/health", () => Results.Ok(new
+            {
+                status = "healthy",
+                hostname = Environment.MachineName,
+                timestamp = DateTime.UtcNow
+            }));
+
             app.MapControllers();
 
             using (var scope = app.Services.CreateScope())
