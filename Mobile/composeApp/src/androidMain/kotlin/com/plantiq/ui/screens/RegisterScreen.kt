@@ -2,12 +2,16 @@ package com.plantiq.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.plantiq.viewmodel.RegisterState
@@ -30,6 +34,8 @@ fun RegisterScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
     
     val context = LocalContext.current
     val tokenManager = remember { TokenManager(context) }
@@ -108,8 +114,16 @@ fun RegisterScreen(
             label = { Text("Пароль") },
             singleLine = true,
             isError = passwordError != null,
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            trailingIcon = {
+                IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                    Icon(
+                        imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                        contentDescription = if (passwordVisible) "Сховати пароль" else "Показати пароль"
+                    )
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             supportingText = {
                 if (passwordError != null) {
@@ -125,9 +139,17 @@ fun RegisterScreen(
             onValueChange = { confirmPassword = it },
             label = { Text("Підтвердіть пароль") },
             singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
+            visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             isError = confirmError != null,
+            trailingIcon = {
+                IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
+                    Icon(
+                        imageVector = if (confirmPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                        contentDescription = if (confirmPasswordVisible) "Сховати пароль" else "Показати пароль"
+                    )
+                }
+            },
             modifier = Modifier.fillMaxWidth(),
             supportingText = {
                 if (confirmError != null) {
