@@ -2,6 +2,7 @@ package com.plantiq.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.plantiq.data.local.TokenManager
 import com.plantiq.viewmodel.ProfileState
 import com.plantiq.viewmodel.ProfileViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,13 +29,15 @@ fun ProfileScreen(
     val context = LocalContext.current
     val tokenManager = remember { TokenManager(context) }
     val viewModel = remember { ProfileViewModel(tokenManager) }
-    
+    val scope = rememberCoroutineScope()
+
     val profileState by viewModel.profileState.collectAsState()
-    
+
     val initialName by tokenManager.userNameFlow.collectAsState(initial = "")
     val initialEmail by tokenManager.userEmailFlow.collectAsState(initial = "")
     val currentUserId by tokenManager.userIdFlow.collectAsState(initial = null)
     val currentUserRole by tokenManager.userRoleFlow.collectAsState(initial = "")
+    val notificationsEnabled by tokenManager.notificationsEnabledFlow.collectAsState(initial = true)
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -178,6 +182,48 @@ fun ProfileScreen(
             }
 
             Spacer(modifier = Modifier.weight(1f))
+
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = if (notificationsEnabled) Icons.Default.Notifications else Icons.Default.NotificationsOff,
+                        contentDescription = null,
+                        tint = if (notificationsEnabled)
+                            MaterialTheme.colorScheme.primary
+                        else
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Spacer(Modifier.width(12.dp))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Пуш-сповіщення",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        Text(
+                            text = if (notificationsEnabled) "Увімкнено" else "Вимкнено",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(
+                        checked = notificationsEnabled,
+                        onCheckedChange = { enabled ->
+                            scope.launch { tokenManager.setNotificationsEnabled(enabled) }
+                        }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             Button(
                 onClick = onNavigateToAddDevice,

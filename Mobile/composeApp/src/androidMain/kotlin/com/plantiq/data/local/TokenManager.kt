@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -21,7 +22,8 @@ class TokenManager(private val context: Context) {
         val USER_NAME_KEY = stringPreferencesKey("user_name")
         val USER_EMAIL_KEY = stringPreferencesKey("user_email")
         val USER_ROLE_KEY = stringPreferencesKey("user_role")
-        val LAST_ACTIVITY_TIME_KEY = longPreferencesKey("last_activity_time") 
+        val LAST_ACTIVITY_TIME_KEY = longPreferencesKey("last_activity_time")
+        val NOTIFICATIONS_ENABLED_KEY = booleanPreferencesKey("notifications_enabled")
     }
 
     val tokenFlow: Flow<String?> = context.dataStore.data.map { it[TOKEN_KEY] }
@@ -30,6 +32,7 @@ class TokenManager(private val context: Context) {
     val userEmailFlow: Flow<String?> = context.dataStore.data.map { it[USER_EMAIL_KEY] }
     val userRoleFlow: Flow<String?> = context.dataStore.data.map { it[USER_ROLE_KEY] }
     val lastActivityTimeFlow: Flow<Long?> = context.dataStore.data.map { it[LAST_ACTIVITY_TIME_KEY] }
+    val notificationsEnabledFlow: Flow<Boolean> = context.dataStore.data.map { it[NOTIFICATIONS_ENABLED_KEY] ?: true }
 
     suspend fun saveSession(token: String, userId: Int, name: String, email: String, role: String) {
         context.dataStore.edit { preferences ->
@@ -52,6 +55,12 @@ class TokenManager(private val context: Context) {
     suspend fun updateLastActivityTime() {
         context.dataStore.edit { preferences ->
             preferences[LAST_ACTIVITY_TIME_KEY] = System.currentTimeMillis()
+        }
+    }
+
+    suspend fun setNotificationsEnabled(enabled: Boolean) {
+        context.dataStore.edit { preferences ->
+            preferences[NOTIFICATIONS_ENABLED_KEY] = enabled
         }
     }
 
