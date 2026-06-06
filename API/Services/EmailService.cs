@@ -8,20 +8,27 @@ namespace API.Services
     {
         private readonly IConfiguration _config;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(IConfiguration config, IHttpClientFactory httpClientFactory)
+        public EmailService(IConfiguration config, IHttpClientFactory httpClientFactory, ILogger<EmailService> logger)
         {
             _config = config;
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         public async Task SendPasswordResetCodeAsync(string toEmail, string code)
         {
-            var apiKey = _config["Resend:ApiKey"]!;
+            var apiKey = _config["Resend:ApiKey"];
             var senderEmail = _config["Resend:SenderEmail"] ?? "onboarding@resend.dev";
             var senderName = _config["Resend:SenderName"] ?? "PlantIQ";
 
-            var body = $@"
+            _logger.LogInformation("Sending reset code to {Email} from {Sender}", toEmail, senderEmail);
+
+            if (string.IsNullOrEmpty(apiKey))
+                throw new InvalidOperationException("Resend:ApiKey is not configured.");
+
+            var htmlBody = $@"
 <html>
 <body style='font-family: Arial, sans-serif; max-width: 480px; margin: auto;'>
   <h2 style='color: #2E7D32;'>PlantIQ — Password Reset</h2>
@@ -37,7 +44,7 @@ namespace API.Services
                 from = $"{senderName} <{senderEmail}>",
                 to = new[] { toEmail },
                 subject = "PlantIQ — Your password reset code",
-                html = body
+                html = htmlBody
             };
 
             var client = _httpClientFactory.CreateClient();
@@ -47,7 +54,13 @@ namespace API.Services
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await client.PostAsync("https://api.resend.com/emails", content);
-            response.EnsureSuccessStatusCode();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorBody = await response.Content.ReadAsStringAsync();
+                _logger.LogError("Resend API error {Status}: {Body}", (int)response.StatusCode, errorBody);
+                throw new HttpRequestException($"Resend error {(int)response.StatusCode}: {errorBody}");
+            }
         }
     }
 }
