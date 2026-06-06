@@ -118,5 +118,36 @@ namespace API.Services
         {
             return await _context.Users.AnyAsync(u => u.UserId == id);
         }
+
+        public async Task<string?> GeneratePasswordResetCodeAsync(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) return null;
+
+            var code = new Random().Next(100000, 999999).ToString();
+            user.PasswordResetToken = BCrypt.Net.BCrypt.HashPassword(code);
+            user.PasswordResetExpires = DateTime.UtcNow.AddMinutes(15);
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return code;
+        }
+
+        public async Task<bool> ResetPasswordAsync(string email, string code, string newPassword)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) return false;
+            if (user.PasswordResetToken == null || user.PasswordResetExpires == null) return false;
+            if (user.PasswordResetExpires < DateTime.UtcNow) return false;
+            if (!BCrypt.Net.BCrypt.Verify(code, user.PasswordResetToken)) return false;
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            user.PasswordResetToken = null;
+            user.PasswordResetExpires = null;
+            user.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

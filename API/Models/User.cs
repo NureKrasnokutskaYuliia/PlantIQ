@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -45,6 +45,14 @@ namespace API.Models
         [Column("fcm_token")]
         public string? FcmToken { get; set; }
 
+        [MaxLength(255)]
+        [JsonIgnore]
+        [Column("password_reset_token")]
+        public string? PasswordResetToken { get; set; }
+
+        [Column("password_reset_expires")]
+        public DateTime? PasswordResetExpires { get; set; }
+
         [JsonIgnore]
         public ICollection<Device> Devices { get; set; } = new List<Device>();
         [JsonIgnore]
@@ -53,3 +61,4 @@ namespace API.Models
         public ICollection<Notification> Notifications { get; set; } = new List<Notification>();
     }
 }
+

@@ -144,9 +144,23 @@ class PlantIqApi(private val client: HttpClient) {
     }
 
     suspend fun updateDeviceToken(fcmToken: String): HttpResponse {
-        return client.put("api/Users/UpdateDeviceToken") { 
+        return client.put("api/Users/UpdateDeviceToken") {
             contentType(ContentType.Application.Json)
-            setBody(UpdateFcmTokenDto(fcmToken)) 
+            setBody(UpdateFcmTokenDto(fcmToken))
+        }
+    }
+
+    suspend fun forgotPassword(email: String): HttpResponse {
+        return client.post("api/Users/forgot-password") {
+            contentType(ContentType.Application.Json)
+            setBody(ForgotPasswordRequestDto(email))
+        }
+    }
+
+    suspend fun resetPassword(email: String, code: String, newPassword: String): HttpResponse {
+        return client.post("api/Users/reset-password") {
+            contentType(ContentType.Application.Json)
+            setBody(ResetPasswordRequestDto(email, code, newPassword))
         }
     }
 }

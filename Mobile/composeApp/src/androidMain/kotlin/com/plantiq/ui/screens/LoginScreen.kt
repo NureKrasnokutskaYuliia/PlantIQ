@@ -28,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
+    onNavigateToForgotPassword: () -> Unit = {},
     viewModel: AuthViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
@@ -101,7 +102,14 @@ fun LoginScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        TextButton(
+            onClick = onNavigateToForgotPassword,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Забули пароль?")
+        }
+
         TextButton(onClick = onNavigateToRegister) {
             Text("Don't have an account? Register")
         }

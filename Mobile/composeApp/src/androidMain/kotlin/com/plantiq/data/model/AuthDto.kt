@@ -16,7 +16,7 @@ data class UserResponseDto(
     @SerializedName("userId") val userId: Int,
     @SerializedName("name") val name: String,
     @SerializedName("email") val email: String,
-    @SerializedName("role") val role: String, 
+    @SerializedName("role") val role: String,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("updatedAt") val updatedAt: String,
     @SerializedName("isActive") val isActive: Boolean,
@@ -27,16 +27,31 @@ data class RegisterRequestDto(
     @SerializedName("name") val name: String,
     @SerializedName("email") val email: String,
     @SerializedName("password") val password: String,
-    @SerializedName("role") val role: String = "Owner" 
+    @SerializedName("role") val role: String = "Owner"
 )
 
 data class UpdateUserDto(
     @SerializedName("name") val name: String,
     @SerializedName("email") val email: String,
-    @SerializedName("role") val role: String,     
+    @SerializedName("role") val role: String,
     @SerializedName("isActive") val isActive: Boolean
 )
 
 data class UpdateFcmTokenDto(
     @SerializedName("token") val token: String
+)
+
+data class ForgotPasswordRequestDto(
+    @SerializedName("email") val email: String
+)
+
+data class ForgotPasswordResponseDto(
+    @SerializedName("message") val message: String,
+    @SerializedName("code") val code: String
+)
+
+data class ResetPasswordRequestDto(
+    @SerializedName("email") val email: String,
+    @SerializedName("code") val code: String,
+    @SerializedName("newPassword") val newPassword: String
 )

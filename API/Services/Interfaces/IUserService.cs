@@ -14,5 +14,7 @@ namespace API.Services.Interfaces
         Task UpdateFcmTokenAsync(int userId, string token);
         Task DeleteUserAsync(int id);
         Task<bool> UserExistsAsync(int id);
+        Task<string?> GeneratePasswordResetCodeAsync(string email);
+        Task<bool> ResetPasswordAsync(string email, string code, string newPassword);
     }
 }

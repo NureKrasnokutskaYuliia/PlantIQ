@@ -177,6 +177,43 @@ namespace API.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Request a password reset OTP code sent to the given email.
+        /// </summary>
+        /// <param name="dto">User email</param>
+        /// <response code="200">OTP generated (code returned in response for demo purposes)</response>
+        /// <response code="404">Email not found</response>
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+        {
+            var code = await _userService.GeneratePasswordResetCodeAsync(dto.Email);
+            if (code == null) return NotFound(new { message = "Користувача з такою поштою не знайдено." });
+
+            // In production: send code via email (SMTP/SendGrid).
+            // For demo: return code directly in response.
+            return Ok(new { message = "Код підтвердження надіслано.", code });
+        }
+
+        /// <summary>
+        /// Reset password using a 6-digit OTP code.
+        /// </summary>
+        /// <param name="dto">Email, OTP code and new password</param>
+        /// <response code="204">Password updated successfully</response>
+        /// <response code="400">Invalid or expired code</response>
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+        {
+            var success = await _userService.ResetPasswordAsync(dto.Email, dto.Code, dto.NewPassword);
+            if (!success) return BadRequest(new { message = "Невірний або застарілий код підтвердження." });
+            return NoContent();
+        }
+
         private static UserResponseDto MapToResponseDto(User user)
         {
             return new UserResponseDto

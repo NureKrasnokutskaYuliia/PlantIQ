@@ -17,6 +17,8 @@ import com.plantiq.ui.screens.MyDevicesScreen
 import com.plantiq.ui.screens.AnalyticsScreen
 import com.plantiq.ui.screens.WateringScreen
 import com.plantiq.ui.screens.PlantsListScreen
+import com.plantiq.ui.screens.ForgotPasswordScreen
+import com.plantiq.ui.screens.ResetPasswordScreen
 import com.google.gson.Gson
 
 import androidx.compose.material3.lightColorScheme
@@ -63,6 +65,9 @@ fun App(startDestination: String = "login") {
                         },
                         onNavigateToRegister = {
                             navController.navigate("register")
+                        },
+                        onNavigateToForgotPassword = {
+                            navController.navigate("forgot_password")
                         }
                     )
                 }
@@ -193,6 +198,36 @@ fun App(startDestination: String = "login") {
                     val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
                     val name = backStackEntry.arguments?.getString("name") ?: "Рослина"
                     WateringScreen(plantName = name, plantId = id, onNavigateBack = { navController.popBackStack() })
+                }
+
+                composable("forgot_password") {
+                    ForgotPasswordScreen(
+                        onNavigateBack = { navController.popBackStack() },
+                        onCodeSent = { email, code ->
+                            val encodedEmail = java.net.URLEncoder.encode(email, "UTF-8")
+                            val encodedCode = java.net.URLEncoder.encode(code, "UTF-8")
+                            navController.navigate("reset_password?email=$encodedEmail&code=$encodedCode")
+                        }
+                    )
+                }
+
+                composable("reset_password?email={email}&code={code}") { backStackEntry ->
+                    val email = java.net.URLDecoder.decode(
+                        backStackEntry.arguments?.getString("email") ?: "", "UTF-8"
+                    )
+                    val code = java.net.URLDecoder.decode(
+                        backStackEntry.arguments?.getString("code") ?: "", "UTF-8"
+                    )
+                    ResetPasswordScreen(
+                        email = email,
+                        prefillCode = code,
+                        onNavigateBack = { navController.popBackStack() },
+                        onSuccess = {
+                            navController.navigate("login") {
+                                popUpTo(0) { inclusive = true }
+                            }
+                        }
+                    )
                 }
             }
         }
