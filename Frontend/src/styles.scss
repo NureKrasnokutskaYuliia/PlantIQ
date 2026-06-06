@@ -176,6 +176,11 @@ h1, h2, h3, h4, h5, h6 {
 .dark-theme .btn.secondary          { background: var(--border-color) !important; color: var(--text-secondary) !important; }
 .dark-theme .btn.secondary:hover    { background: var(--bg-primary) !important; }
 
+/* auth pages: container gradient background */
+.dark-theme .auth-container {
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%) !important;
+}
+
 /* user-layout: logout button */
 .dark-theme .logout-btn {
   background: rgba(239, 68, 68, 0.1) !important;
