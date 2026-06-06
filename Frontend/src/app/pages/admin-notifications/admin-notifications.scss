@@ -165,3 +165,11 @@
     color: var(--text-secondary);
     line-height: 1.5;
 }
+
+/* ===== DARK THEME ===== */
+.dark-theme {
+    .alert {
+        &.error   { background: rgba(239, 68, 68, 0.1); border-left-color: rgba(239, 68, 68, 0.5); color: #fca5a5; }
+        &.success { background: rgba(74, 222, 128, 0.1); border-left-color: rgba(74, 222, 128, 0.5); color: #86efac; }
+    }
+}

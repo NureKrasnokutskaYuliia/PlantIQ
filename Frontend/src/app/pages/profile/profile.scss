@@ -240,6 +240,24 @@
   animation: spin 0.8s linear infinite;
 }
 
+/* ===== DARK THEME ===== */
+.dark-theme {
+  .role-badge {
+    background: rgba(74, 222, 128, 0.15);
+    color: #86efac;
+    &.admin { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+  }
+  .alert {
+    &.error   { background: rgba(239, 68, 68, 0.1); border-left-color: rgba(239, 68, 68, 0.5); color: #fca5a5; }
+    &.success { background: rgba(74, 222, 128, 0.1); border-left-color: rgba(74, 222, 128, 0.5); color: #86efac; }
+  }
+  .danger-zone {
+    background: rgba(239, 68, 68, 0.05);
+    border-color: rgba(239, 68, 68, 0.2);
+    h3 { color: #fca5a5; }
+  }
+}
+
 /* ===== DANGER ZONE ===== */
 .danger-zone {
   background: #fef2f2;

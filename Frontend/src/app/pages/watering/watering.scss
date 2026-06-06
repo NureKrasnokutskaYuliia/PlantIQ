@@ -457,3 +457,30 @@
         opacity: 1;
     }
 }
+
+/* ===== DARK THEME ===== */
+.dark-theme {
+    .badge {
+        &.blue  { background: rgba(59, 130, 246, 0.15); color: #93c5fd; }
+        &.green { background: rgba(74, 222, 128, 0.15); color: #86efac; }
+    }
+    .alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        border-left-color: rgba(239, 68, 68, 0.5);
+        color: #fca5a5;
+    }
+    .modal-close:hover { background: rgba(239, 68, 68, 0.15); color: #fca5a5; }
+    .subsection-header .btn-icon.add:hover {
+        color: #4ade80;
+        background: rgba(74, 222, 128, 0.1);
+        border-radius: 4px;
+    }
+    .sched.subsection h4 { color: var(--text-secondary); }
+    .event-status {
+        &.status-done      { color: #4ade80; }
+        &.status-pending   { color: #fbbf24; }
+        &.status-cancelled { color: #fca5a5; }
+    }
+    .event-amount { color: #93c5fd; }
+    .btn-primary { background: var(--primary-color); &:hover { background: var(--primary-hover); } }
+}
