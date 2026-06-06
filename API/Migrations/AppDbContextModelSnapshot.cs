@@ -540,6 +540,15 @@ namespace API.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("password_hash");
 
+                    b.Property<DateTime?>("PasswordResetExpires")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("password_reset_expires");
+
+                    b.Property<string>("PasswordResetToken")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("password_reset_token");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("text")
