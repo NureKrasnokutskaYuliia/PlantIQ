@@ -19,14 +19,14 @@ namespace API.Services
 
         public async Task SendPasswordResetCodeAsync(string toEmail, string code)
         {
-            var apiKey = _config["Resend:ApiKey"];
-            var senderEmail = _config["Resend:SenderEmail"] ?? "onboarding@resend.dev";
-            var senderName = _config["Resend:SenderName"] ?? "PlantIQ";
+            var apiKey = _config["Brevo:ApiKey"];
+            var senderEmail = _config["Brevo:SenderEmail"]!;
+            var senderName = _config["Brevo:SenderName"] ?? "PlantIQ";
 
             _logger.LogInformation("Sending reset code to {Email} from {Sender}", toEmail, senderEmail);
 
             if (string.IsNullOrEmpty(apiKey))
-                throw new InvalidOperationException("Resend:ApiKey is not configured.");
+                throw new InvalidOperationException("Brevo:ApiKey is not configured.");
 
             var htmlBody = $@"
 <html>
@@ -41,25 +41,25 @@ namespace API.Services
 
             var payload = new
             {
-                from = $"{senderName} <{senderEmail}>",
-                to = new[] { toEmail },
+                sender = new { name = senderName, email = senderEmail },
+                to = new[] { new { email = toEmail } },
                 subject = "PlantIQ — Your password reset code",
-                html = htmlBody
+                htmlContent = htmlBody
             };
 
             var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            client.DefaultRequestHeaders.Add("api-key", apiKey);
 
             var json = JsonSerializer.Serialize(payload);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync("https://api.resend.com/emails", content);
+            var response = await client.PostAsync("https://api.brevo.com/v3/smtp/email", content);
 
             if (!response.IsSuccessStatusCode)
             {
                 var errorBody = await response.Content.ReadAsStringAsync();
-                _logger.LogError("Resend API error {Status}: {Body}", (int)response.StatusCode, errorBody);
-                throw new HttpRequestException($"Resend error {(int)response.StatusCode}: {errorBody}");
+                _logger.LogError("Brevo API error {Status}: {Body}", (int)response.StatusCode, errorBody);
+                throw new HttpRequestException($"Brevo error {(int)response.StatusCode}: {errorBody}");
             }
         }
     }
