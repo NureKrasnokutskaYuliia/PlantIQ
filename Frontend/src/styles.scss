@@ -90,3 +90,99 @@ h1, h2, h3, h4, h5, h6 {
     color: #bbf7d0;
   }
 }
+
+/* ============================================================
+   GLOBAL DARK THEME OVERRIDES
+   Component ViewEncapsulation prevents .dark-theme selectors
+   inside component SCSS from matching html.dark-theme.
+   All such overrides must live here in the global stylesheet.
+   ============================================================ */
+
+/* sensor status indicators (plants-list) */
+.dark-theme .sensor-item.status-low  { background: rgba(96, 165, 250, 0.1) !important; border-left-color: #60a5fa !important; }
+.dark-theme .sensor-item.status-high { background: rgba(251, 191, 36, 0.1) !important;  border-left-color: #fbbf24 !important; }
+.dark-theme .sensor-item.status-ok   { background: rgba(74, 222, 128, 0.1) !important;  border-left-color: #4ade80 !important; }
+
+/* icon button hovers */
+.dark-theme .btn-icon.danger:hover { background: rgba(239, 68, 68, 0.15)  !important; }
+.dark-theme .btn-icon.edit:hover   { background: rgba(96, 165, 250, 0.12) !important; }
+.dark-theme .btn-icon.add:hover    { color: #4ade80 !important; background: rgba(74, 222, 128, 0.1) !important; }
+
+/* modal close button */
+.dark-theme .modal-close:hover { background: rgba(239, 68, 68, 0.15) !important; color: #fca5a5 !important; }
+
+/* alert-error banner (plants-list, watering, analytics, my-devices) */
+.dark-theme .alert-error {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-left-color: rgba(239, 68, 68, 0.5) !important;
+  color: #fca5a5 !important;
+}
+
+/* alert with modifier classes (profile, admin pages) */
+.dark-theme .alert.error   { background: rgba(239, 68, 68, 0.1) !important;  border-left-color: rgba(239, 68, 68, 0.5) !important;  color: #fca5a5 !important; }
+.dark-theme .alert.success { background: rgba(74, 222, 128, 0.1) !important; border-left-color: rgba(74, 222, 128, 0.5) !important; color: #86efac !important; }
+
+/* watering: badges */
+.dark-theme .badge.blue  { background: rgba(59, 130, 246, 0.15) !important; color: #93c5fd !important; }
+.dark-theme .badge.green { background: rgba(74, 222, 128, 0.15) !important; color: #86efac !important; }
+
+/* watering: scheduled subsection */
+.dark-theme .sched.subsection h4 { color: var(--text-secondary) !important; }
+
+/* watering: event status */
+.dark-theme .event-status.status-done      { color: #4ade80 !important; }
+.dark-theme .event-status.status-pending   { color: #fbbf24 !important; }
+.dark-theme .event-status.status-cancelled { color: #fca5a5 !important; }
+.dark-theme .event-amount { color: #93c5fd !important; }
+
+/* analytics: metric card status backgrounds */
+.dark-theme .metric-card.status-ok   { background: rgba(74, 222, 128, 0.1) !important; border-color: rgba(74, 222, 128, 0.3) !important; }
+.dark-theme .metric-card.status-low  { background: rgba(96, 165, 250, 0.1) !important; border-color: rgba(96, 165, 250, 0.3) !important; }
+.dark-theme .metric-card.status-high { background: rgba(251, 191, 36, 0.1) !important; border-color: rgba(251, 191, 36, 0.3) !important; }
+
+/* profile: role badge */
+.dark-theme .role-badge       { background: rgba(74, 222, 128, 0.15) !important; color: #86efac !important; }
+.dark-theme .role-badge.admin { background: rgba(239, 68, 68, 0.15)  !important; color: #fca5a5 !important; }
+
+/* profile: danger zone */
+.dark-theme .danger-zone    { background: rgba(239, 68, 68, 0.05) !important; border-color: rgba(239, 68, 68, 0.2) !important; }
+.dark-theme .danger-zone h3 { color: #fca5a5 !important; }
+
+/* my-devices: device status strip */
+.dark-theme .device-status.status-online  { background: rgba(74, 222, 128, 0.12) !important; color: #4ade80 !important; }
+.dark-theme .device-status.status-offline { background: rgba(239, 68, 68, 0.12)  !important; color: #fca5a5 !important; }
+.dark-theme .device-status.status-error   { background: rgba(251, 191, 36, 0.12) !important; color: #fbbf24 !important; }
+
+/* my-devices: attached plant badge */
+.dark-theme .attached-plant { color: #4ade80 !important; background: rgba(74, 222, 128, 0.1) !important; border-color: rgba(74, 222, 128, 0.2) !important; }
+
+/* admin-users: banned row */
+.dark-theme tr.banned td { background: rgba(148, 163, 184, 0.05) !important; }
+
+/* admin-users: status badges */
+.dark-theme .badge.active   { background: rgba(74, 222, 128, 0.15) !important; color: #86efac !important; }
+.dark-theme .badge.inactive { background: rgba(239, 68, 68, 0.15)  !important; color: #fca5a5 !important; }
+
+/* admin-users: action buttons */
+.dark-theme .btn.ban         { background: rgba(251, 191, 36, 0.12) !important;  color: #fbbf24 !important; }
+.dark-theme .btn.ban:hover   { background: rgba(251, 191, 36, 0.2)  !important; }
+.dark-theme .btn.unban       { background: rgba(74, 222, 128, 0.12) !important;  color: #4ade80 !important; }
+.dark-theme .btn.unban:hover { background: rgba(74, 222, 128, 0.2)  !important; }
+.dark-theme .btn.delete       { background: rgba(239, 68, 68, 0.12) !important;  color: #fca5a5 !important; }
+.dark-theme .btn.delete:hover { background: rgba(239, 68, 68, 0.2)  !important; }
+
+/* admin-users: modal and secondary button */
+.dark-theme .modal                  { background: var(--card-bg) !important; }
+.dark-theme .btn.secondary          { background: var(--border-color) !important; color: var(--text-secondary) !important; }
+.dark-theme .btn.secondary:hover    { background: var(--bg-primary) !important; }
+
+/* user-layout: logout button */
+.dark-theme .logout-btn {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.2) !important;
+  color: #fca5a5 !important;
+}
+.dark-theme .logout-btn:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
