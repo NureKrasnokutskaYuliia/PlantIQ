@@ -1,26 +1,25 @@
 using API.Services.Interfaces;
-using System.Net;
-using System.Net.Mail;
+using System.Text;
+using System.Text.Json;
 
 namespace API.Services
 {
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _config;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public EmailService(IConfiguration config)
+        public EmailService(IConfiguration config, IHttpClientFactory httpClientFactory)
         {
             _config = config;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task SendPasswordResetCodeAsync(string toEmail, string code)
         {
-            var section = _config.GetSection("Email");
-            var host = section["SmtpHost"] ?? "smtp.gmail.com";
-            var port = int.Parse(section["SmtpPort"] ?? "587");
-            var senderEmail = section["SenderEmail"]!;
-            var senderName = section["SenderName"] ?? "PlantIQ";
-            var password = section["Password"]!;
+            var apiKey = _config["Resend:ApiKey"]!;
+            var senderEmail = _config["Resend:SenderEmail"] ?? "onboarding@resend.dev";
+            var senderName = _config["Resend:SenderName"] ?? "PlantIQ";
 
             var body = $@"
 <html>
@@ -33,22 +32,22 @@ namespace API.Services
 </body>
 </html>";
 
-            using var client = new SmtpClient(host, port)
+            var payload = new
             {
-                Credentials = new NetworkCredential(senderEmail, password),
-                EnableSsl = true
+                from = $"{senderName} <{senderEmail}>",
+                to = new[] { toEmail },
+                subject = "PlantIQ — Your password reset code",
+                html = body
             };
 
-            var message = new MailMessage
-            {
-                From = new MailAddress(senderEmail, senderName),
-                Subject = "PlantIQ — Your password reset code",
-                Body = body,
-                IsBodyHtml = true
-            };
-            message.To.Add(toEmail);
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
 
-            await client.SendMailAsync(message);
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await client.PostAsync("https://api.resend.com/emails", content);
+            response.EnsureSuccessStatusCode();
         }
     }
 }
