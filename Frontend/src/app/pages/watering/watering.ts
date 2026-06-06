@@ -2,7 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { PlantService } from '../../core/services/plant.service';
-import { Plant } from '../../core/models/plant.model';
+import { Plant, WateringMode } from '../../core/models/plant.model';
 import { WateringService } from '../../core/services/sensor.service';
 import { WateringEvent, WateringSchedule } from '../../core/models/sensor.model';
 import { FormsModule } from '@angular/forms';
@@ -32,20 +32,20 @@ export class Watering implements OnInit {
   showScheduleForm = signal<{plantId: number, idx: number} | null>(null);
   newSchedule: any = { startTime: '08:00', intervalHours: 24, amountMl: 100, enabled: true, daysOfWeek: [1,2,3,4,5,6,0] };
 
-  readonly MODE_LABELS: Record<number, string> = {
-    0: '🤲 Ручний',
-    1: '🤖 Автоматичний (по датчикам)',
-    2: '📅 Автоматичний (за розкладом)'
+  readonly MODE_LABELS: Record<string, string> = {
+    'Manual': '🤲 Ручний',
+    'Automatic': '🤖 Автоматичний (по датчикам)',
+    'Scheduled': '📅 Автоматичний (за розкладом)'
   };
-  readonly STATUS_LABELS: Record<number, string> = {
-    0: '⏳ Заплановано',
-    1: '✅ Виконано',
-    2: '❌ Скасовано'
+  readonly STATUS_LABELS: Record<string, string> = {
+    'Completed': '✅ Виконано',
+    'Failed': '❌ Не вдалося',
+    'Cancelled': '❌ Скасовано'
   };
-  readonly STATUS_CLASSES: Record<number, string> = {
-    0: 'status-pending',
-    1: 'status-done',
-    2: 'status-cancelled'
+  readonly STATUS_CLASSES: Record<string, string> = {
+    'Completed': 'status-done',
+    'Failed': 'status-cancelled',
+    'Cancelled': 'status-cancelled'
   };
   readonly DAYS = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 
@@ -96,10 +96,10 @@ export class Watering implements OnInit {
   }
 
   totalWatered(events: WateringEvent[]): number {
-    return events.filter(e => e.status === 1).reduce((sum, e) => sum + e.amountMl, 0);
+    return events.filter(e => e.status === 'Completed').reduce((sum, e) => sum + e.amountMl, 0);
   }
 
-  updateWateringMode(idx: number, plantId: number, mode: number) {
+  updateWateringMode(idx: number, plantId: number, mode: WateringMode) {
     const p = this.plantData()[idx].plant;
     const dto = { ...p, wateringMode: mode };
     this.plantSvc.updatePlant(plantId, dto).subscribe({

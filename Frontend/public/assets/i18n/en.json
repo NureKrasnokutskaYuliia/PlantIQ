@@ -59,7 +59,32 @@
     "EMAIL_LABEL": "Email",
     "PASSWORD_LABEL": "Password",
     "NO_ACCOUNT": "No account? Register",
-    "HAS_ACCOUNT": "Already have an account? Sign In"
+    "HAS_ACCOUNT": "Already have an account? Sign In",
+    "FORGOT": {
+      "LINK": "Forgot password?",
+      "TITLE": "Password Recovery",
+      "SUBTITLE": "Enter your account email and we will send a verification code.",
+      "BTN": "Send Code",
+      "SENDING": "Sending...",
+      "BACK_TO_LOGIN": "Back to Sign In",
+      "NOT_FOUND": "No account found with that email address."
+    },
+    "RESET": {
+      "TITLE": "New Password",
+      "SUBTITLE": "Enter the code from your email and set a new password.",
+      "CODE_SENT_TO": "Code sent to:",
+      "CODE_LABEL": "6-digit code",
+      "CODE_LENGTH": "Code must be exactly 6 digits.",
+      "NEW_PWD_LABEL": "New password",
+      "CONFIRM_PWD_LABEL": "Confirm password",
+      "PWD_MISMATCH": "Passwords do not match.",
+      "BTN": "Change Password",
+      "SAVING": "Saving...",
+      "INVALID_CODE": "Invalid or expired verification code.",
+      "SUCCESS_TITLE": "Password Changed!",
+      "SUCCESS_MSG": "Your password has been updated. You can now sign in with your new password.",
+      "GO_LOGIN": "Sign In"
+    }
   },
   "COMMON": {
     "LANGUAGE": "Language",

@@ -8,14 +8,17 @@ export interface SensorData {
   batteryLevel?: number;
 }
 
+export type WateringEventMode = 'Manual' | 'Automatic' | 'Scheduled';
+export type WateringEventStatus = 'Completed' | 'Failed' | 'Cancelled';
+
 export interface WateringEvent {
   eventId: number;
   plantId: number;
   scheduleId?: number;
   timestamp: string;
   amountMl: number;
-  mode: number;
-  status: number;
+  mode: WateringEventMode;
+  status: WateringEventStatus;
   notes?: string;
 }
 

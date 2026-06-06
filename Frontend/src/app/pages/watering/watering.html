@@ -25,9 +25,9 @@
         </div>
         <div class="plant-summary">
           <select [ngModel]="entry.plant.wateringMode" (ngModelChange)="updateWateringMode(idx, entry.plant.plantId, $event)" (click)="$event.stopPropagation()">
-            <option [ngValue]="0">{{ 'WATERING.MODE_MANUAL' | translate }}</option>
-            <option [ngValue]="1">{{ 'WATERING.MODE_SENSORS' | translate }}</option>
-            <option [ngValue]="2">{{ 'WATERING.MODE_SCHED' | translate }}</option>
+            <option [ngValue]="'Manual'">{{ 'WATERING.MODE_MANUAL' | translate }}</option>
+            <option [ngValue]="'Automatic'">{{ 'WATERING.MODE_SENSORS' | translate }}</option>
+            <option [ngValue]="'Scheduled'">{{ 'WATERING.MODE_SCHED' | translate }}</option>
           </select>
           <span class="badge blue">{{ entry.events.length }} {{ 'WATERING.EVENTS_COUNT' | translate }}</span>
           <span class="badge green">{{ totalWatered(entry.events) }} {{ 'WATERING.TOTAL_WATERED' | translate }}</span>

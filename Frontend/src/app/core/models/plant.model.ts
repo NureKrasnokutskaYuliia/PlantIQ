@@ -1,3 +1,5 @@
+export type WateringMode = 'Manual' | 'Automatic' | 'Scheduled';
+
 export interface Plant {
   plantId: number;
   userId: number;
@@ -11,7 +13,7 @@ export interface Plant {
   notes?: string;
   createdAt: string;
   isActive: boolean;
-  wateringMode: number;
+  wateringMode: WateringMode;
 }
 
 export interface CreatePlantDto {
@@ -23,5 +25,5 @@ export interface CreatePlantDto {
   optimalLightMin?: number;
   optimalLightMax?: number;
   notes?: string;
-  wateringMode: number;
+  wateringMode: WateringMode;
 }

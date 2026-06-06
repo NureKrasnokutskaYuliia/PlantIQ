@@ -17,11 +17,15 @@ import { Analytics } from './pages/analytics/analytics';
 import { Profile } from './pages/profile/profile';
 import { Login } from './pages/auth/login/login';
 import { Register } from './pages/auth/register/register';
+import { ForgotPassword } from './pages/auth/forgot-password/forgot-password';
+import { ResetPassword } from './pages/auth/reset-password/reset-password';
 import { authGuard, adminGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
+  { path: 'forgot-password', component: ForgotPassword },
+  { path: 'reset-password', component: ResetPassword },
   {
     path: 'admin',
     component: AdminLayout,

@@ -33,8 +33,9 @@
       <div class="form-group">
         <label>{{ 'PLANTS.MODE' | translate }}</label>
         <select [(ngModel)]="newPlant.wateringMode">
-          <option [ngValue]="0">{{ 'PLANTS.MODE_MANUAL' | translate }}</option>
-          <option [ngValue]="1">{{ 'PLANTS.MODE_AUTO' | translate }}</option>
+          <option [ngValue]="'Manual'">{{ 'PLANTS.MODE_MANUAL' | translate }}</option>
+          <option [ngValue]="'Automatic'">{{ 'PLANTS.MODE_AUTO' | translate }}</option>
+          <option [ngValue]="'Scheduled'">{{ 'WATERING.MODE_SCHED' | translate }}</option>
         </select>
       </div>
       <div class="form-group">
@@ -120,7 +121,7 @@
         <div class="plant-meta">
           <span>📡 {{ 'PLANTS.DEVICE' | translate }}: {{ getDeviceName(plant.deviceId) }}</span>
           <span>💦 {{ 'WATERING.SUBTITLE' | translate }}: {{ plant.optimalMoistureMin }}–{{ plant.optimalMoistureMax }}%</span>
-          <span>{{ plant.wateringMode === 0 ? ('PLANTS.MODE_MANUAL' | translate) : ('PLANTS.MODE_AUTO' | translate) }}</span>
+          <span>{{ plant.wateringMode === 'Manual' ? ('PLANTS.MODE_MANUAL' | translate) : (plant.wateringMode === 'Automatic' ? ('PLANTS.MODE_AUTO' | translate) : ('WATERING.MODE_SCHED' | translate)) }}</span>
         </div>
       </div>
     }
@@ -154,10 +155,11 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Режим поливу</label>
+          <label>{{ 'PLANTS.MODE' | translate }}</label>
           <select [(ngModel)]="editForm.wateringMode">
-            <option [ngValue]="0">Ручний</option>
-            <option [ngValue]="1">Автоматичний</option>
+            <option [ngValue]="'Manual'">{{ 'PLANTS.MODE_MANUAL' | translate }}</option>
+            <option [ngValue]="'Automatic'">{{ 'PLANTS.MODE_AUTO' | translate }}</option>
+            <option [ngValue]="'Scheduled'">{{ 'WATERING.MODE_SCHED' | translate }}</option>
           </select>
         </div>
         <div class="form-group">

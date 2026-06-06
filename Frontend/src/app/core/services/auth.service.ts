@@ -6,8 +6,7 @@ import { Router } from '@angular/router';
 
 export const API_BASE_URL = 'https://plantiq-mkp3.onrender.com/api';
 
-// ЗМІНИТИ ТУТ: Для продакшену змініть 2 на 30 (хвилин)
-export const SESSION_TIMEOUT_MINUTES = 2; 
+export const SESSION_TIMEOUT_MINUTES = 30;
 export const WARNING_BEFORE_SECONDS = 30;
 
 import { LoginRequest, RegisterRequest, UserResponse, LoginResponse } from '../models/auth.model';
@@ -18,7 +17,6 @@ export class AuthService {
   private router = inject(Router);
   private baseUrl = API_BASE_URL;
 
-  // Сигнал, який показує модальне вікно попередження
   public showSessionWarning = signal(false);
   private checkInterval: any;
 
@@ -30,7 +28,7 @@ export class AuthService {
     if (this.checkInterval) clearInterval(this.checkInterval);
     this.checkInterval = setInterval(() => {
       if (!this.isLoggedIn()) return;
-      
+
       const expiresStr = localStorage.getItem('sessionExpires');
       if (expiresStr) {
         const expires = parseInt(expiresStr, 10);
@@ -68,6 +66,28 @@ export class AuthService {
     );
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.baseUrl}/Users/forgot-password`, { email }).pipe(
+      catchError(error => {
+        if (error.status === 404) {
+          return throwError(() => new Error('AUTH.FORGOT.NOT_FOUND'));
+        }
+        return throwError(() => new Error('COMMON.ERRORS.SERVER_ERROR'));
+      })
+    );
+  }
+
+  resetPassword(email: string, code: string, newPassword: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Users/reset-password`, { email, code, newPassword }).pipe(
+      catchError(error => {
+        if (error.status === 400) {
+          return throwError(() => new Error('AUTH.RESET.INVALID_CODE'));
+        }
+        return throwError(() => new Error('COMMON.ERRORS.SERVER_ERROR'));
+      })
+    );
+  }
+
   register(data: RegisterRequest): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.baseUrl}/Users`, data).pipe(
       catchError(error => {
@@ -86,11 +106,11 @@ export class AuthService {
     const expiresAt = Date.now() + SESSION_TIMEOUT_MINUTES * 60 * 1000;
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('token', resp.token);
-    
+
     // ГНУЧКА ПЕРЕВІРКА РОЛІ (число 1 або рядок "Admin")
     const isActuallyAdmin = resp.user.role === 1 || String(resp.user.role).toLowerCase() === 'admin';
     localStorage.setItem('role', isActuallyAdmin ? 'admin' : 'user');
-    
+
     localStorage.setItem('userName', resp.user.name);
     localStorage.setItem('userId', String(resp.user.userId));
     localStorage.setItem('sessionExpires', expiresAt.toString());

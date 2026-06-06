@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { PlantService } from '../../core/services/plant.service';
-import { Plant, CreatePlantDto } from '../../core/models/plant.model';
+import { Plant, CreatePlantDto, WateringMode } from '../../core/models/plant.model';
 import { DeviceService } from '../../core/services/device.service';
 import { Device } from '../../core/models/device.model';
 import { SensorService } from '../../core/services/sensor.service';
@@ -34,7 +34,7 @@ export class PlantsList implements OnInit {
   newPlant: CreatePlantDto = {
     name: '',
     species: '',
-    wateringMode: 0,
+    wateringMode: 'Manual',
     optimalMoistureMin: 40,
     optimalMoistureMax: 80,
     optimalLightMin: 200,
@@ -82,7 +82,7 @@ export class PlantsList implements OnInit {
     this.plantService.createPlant(this.newPlant).subscribe({
       next: () => {
         this.showAddForm.set(false);
-        this.newPlant = { name: '', species: '', wateringMode: 0, optimalMoistureMin: 40, optimalMoistureMax: 80 };
+        this.newPlant = { name: '', species: '', wateringMode: 'Manual', optimalMoistureMin: 40, optimalMoistureMax: 80 };
         this.loadAll();
       },
       error: () => this.error.set('COMMON.ERRORS.GENERAL')
