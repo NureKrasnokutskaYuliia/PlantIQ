@@ -22,7 +22,7 @@ import com.plantiq.viewmodel.ForgotPasswordViewModel
 @Composable
 fun ForgotPasswordScreen(
     onNavigateBack: () -> Unit,
-    onCodeSent: (email: String, code: String) -> Unit,
+    onCodeSent: (email: String) -> Unit,
     viewModel: ForgotPasswordViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
@@ -31,7 +31,7 @@ fun ForgotPasswordScreen(
     LaunchedEffect(forgotState) {
         if (forgotState is ForgotPasswordState.CodeSent) {
             val state = forgotState as ForgotPasswordState.CodeSent
-            onCodeSent(state.email, state.code)
+            onCodeSent(state.email)
             viewModel.resetForgotState()
         }
     }
@@ -39,10 +39,10 @@ fun ForgotPasswordScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Відновлення паролю") },
+                title = { Text("Password Recovery") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -67,13 +67,13 @@ fun ForgotPasswordScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                text = "Введіть email вашого акаунту",
+                text = "Enter your account email",
                 style = MaterialTheme.typography.bodyLarge,
                 textAlign = TextAlign.Center
             )
 
             Text(
-                text = "Ми надішлемо код підтвердження для скидання паролю.",
+                text = "We will send a verification code to reset your password.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -102,7 +102,7 @@ fun ForgotPasswordScreen(
                     modifier = Modifier.fillMaxWidth().height(50.dp),
                     enabled = email.isNotBlank()
                 ) {
-                    Text("Надіслати код")
+                    Text("Send Code")
                 }
             }
 

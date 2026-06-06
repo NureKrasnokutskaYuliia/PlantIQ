@@ -39,10 +39,10 @@ fun AddDeviceScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Зареєструвати пристрій") },
+                title = { Text("Register Device") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -69,7 +69,7 @@ fun AddDeviceScreen(
                 tint = MaterialTheme.colorScheme.primary
             )
             Text(
-                text = "Додайте свій IoT-пристрій, щоб підключити його до рослини і відстежувати її стан.",
+                text = "Add your IoT device to connect it to a plant and monitor its condition.",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center
@@ -80,8 +80,8 @@ fun AddDeviceScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Назва пристрою *") },
-                placeholder = { Text("напр. «Сенсор на підвіконні»") },
+                label = { Text("Device name *") },
+                placeholder = { Text("e.g. \"Windowsill Sensor\"") },
                 singleLine = true,
                 isError = name.isBlank() && state is DeviceAddState.Error,
                 modifier = Modifier.fillMaxWidth()
@@ -90,8 +90,8 @@ fun AddDeviceScreen(
             OutlinedTextField(
                 value = model,
                 onValueChange = { model = it },
-                label = { Text("Модель (необов'язково)") },
-                placeholder = { Text("напр. ESP32-S3") },
+                label = { Text("Model (optional)") },
+                placeholder = { Text("e.g. ESP32-S3") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -99,8 +99,8 @@ fun AddDeviceScreen(
             OutlinedTextField(
                 value = serialNumber,
                 onValueChange = { serialNumber = it },
-                label = { Text("Серійний номер (необов'язково)") },
-                placeholder = { Text("напр. SN-00123") },
+                label = { Text("Serial number (optional)") },
+                placeholder = { Text("e.g. SN-00123") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -125,7 +125,7 @@ fun AddDeviceScreen(
                 ) {
                     Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text("Зареєструвати пристрій")
+                    Text("Register Device")
                 }
             }
         }

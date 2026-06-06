@@ -21,6 +21,7 @@ namespace API
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+            builder.Services.AddScoped<IEmailService, EmailService>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IDeviceService, DeviceService>();
             builder.Services.AddScoped<IPlantService, PlantService>();

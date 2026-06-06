@@ -41,13 +41,13 @@ fun RegisterScreen(
     val tokenManager = remember { TokenManager(context) }
     
     val isPasswordInvalid = password.isNotEmpty() && password.length < 6
-    val passwordError = if (isPasswordInvalid) "Мінімум 6 символів" else null
+    val passwordError = if (isPasswordInvalid) "Minimum 6 characters" else null
 
     val isConfirmInvalid = confirmPassword.isNotEmpty() && password != confirmPassword
-    val confirmError = if (isConfirmInvalid) "Паролі не співпадають" else null
+    val confirmError = if (isConfirmInvalid) "Passwords do not match" else null
 
     val isEmailInvalid = email.isNotEmpty() && (!email.contains("@") || !email.contains("."))
-    val emailError = if (isEmailInvalid) "Невірний формат пошти" else null
+    val emailError = if (isEmailInvalid) "Invalid email format" else null
 
     val isFormValid = name.isNotBlank() && email.isNotBlank() && !isEmailInvalid && !isPasswordInvalid && !isConfirmInvalid && password.isNotEmpty() && confirmPassword.isNotEmpty()
     
@@ -77,14 +77,14 @@ fun RegisterScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Реєстрація", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Create Account", style = MaterialTheme.typography.headlineMedium)
         
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text("Ім'я") },
+            label = { Text("Name") },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
@@ -111,7 +111,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Пароль") },
+            label = { Text("Password") },
             singleLine = true,
             isError = passwordError != null,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -120,7 +120,7 @@ fun RegisterScreen(
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
                         imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                        contentDescription = if (passwordVisible) "Сховати пароль" else "Показати пароль"
+                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
                     )
                 }
             },
@@ -137,7 +137,7 @@ fun RegisterScreen(
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
-            label = { Text("Підтвердіть пароль") },
+            label = { Text("Confirm password") },
             singleLine = true,
             visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -146,7 +146,7 @@ fun RegisterScreen(
                 IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
                     Icon(
                         imageVector = if (confirmPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                        contentDescription = if (confirmPasswordVisible) "Сховати пароль" else "Показати пароль"
+                        contentDescription = if (confirmPasswordVisible) "Hide password" else "Show password"
                     )
                 }
             },
@@ -168,7 +168,7 @@ fun RegisterScreen(
                 enabled = isFormValid,
                 modifier = Modifier.fillMaxWidth().height(50.dp)
             ) {
-                Text("Зареєструватись")
+                Text("Register")
             }
         }
 

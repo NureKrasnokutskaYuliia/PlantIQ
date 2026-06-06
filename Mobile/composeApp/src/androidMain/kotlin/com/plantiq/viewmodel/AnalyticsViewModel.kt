@@ -29,10 +29,10 @@ class AnalyticsViewModel : ViewModel() {
                     val list = response.body<List<SensorDataResponseDto>>()
                     _state.value = AnalyticsState.Success(list.reversed()) // Oldest first for charts
                 } else {
-                    _state.value = AnalyticsState.Error("Не вдалося завантажити історію")
+                    _state.value = AnalyticsState.Error("Failed to load history")
                 }
             } catch (e: Exception) {
-                _state.value = AnalyticsState.Error("Помилка з'єднання: ${e.message}")
+                _state.value = AnalyticsState.Error("Connection error: ${e.message}")
             }
         }
     }

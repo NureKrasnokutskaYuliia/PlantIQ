@@ -49,16 +49,16 @@ class AuthViewModel : ViewModel() {
 
                     _authState.value = AuthState.Success(body.user)
                 } else {
-                    _authState.value = AuthState.Error("Користувача з такою поштою та паролем не існує")
+                    _authState.value = AuthState.Error("Invalid email or password.")
                 }
             } catch (e: Exception) {
                 println("Auth Error (API): ${e.message}")
                 e.printStackTrace()
 
                 val errorMsg = if (e.localizedMessage?.contains("timeout", ignoreCase = true) == true) {
-                    "Сервер прокидається після сплячки, зачекайте ще кілька секунд..."
+                    "Server is starting up, please wait a moment..."
                 } else {
-                    "Немає зв'язку з інтернетом або сервером."
+                    "No internet or server connection."
                 }
                 _authState.value = AuthState.Error(errorMsg)
             }

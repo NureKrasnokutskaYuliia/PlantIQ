@@ -82,7 +82,7 @@ fun LoginScreen(
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
                     Icon(
                         imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                        contentDescription = if (passwordVisible) "Сховати пароль" else "Показати пароль"
+                        contentDescription = if (passwordVisible) "Hide password" else "Show password"
                     )
                 }
             },
@@ -107,7 +107,7 @@ fun LoginScreen(
             onClick = onNavigateToForgotPassword,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Забули пароль?")
+            Text("Forgot password?")
         }
 
         TextButton(onClick = onNavigateToRegister) {

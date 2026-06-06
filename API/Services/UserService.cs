@@ -13,11 +13,13 @@ namespace API.Services
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IEmailService _emailService;
 
-        public UserService(AppDbContext context, IConfiguration configuration)
+        public UserService(AppDbContext context, IConfiguration configuration, IEmailService emailService)
         {
             _context = context;
             _configuration = configuration;
+            _emailService = emailService;
         }
 
         public async Task<IEnumerable<User>> GetAllAsync()
@@ -129,6 +131,8 @@ namespace API.Services
             user.PasswordResetExpires = DateTime.UtcNow.AddMinutes(15);
             user.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+
+            await _emailService.SendPasswordResetCodeAsync(email, code);
 
             return code;
         }

@@ -106,17 +106,17 @@ class PlantEditViewModel : ViewModel() {
         wateringMode: String
     ) {
         if (name.isBlank()) {
-            _editState.value = PlantEditState.Error("Введіть назву рослини")
+            _editState.value = PlantEditState.Error("Please enter a plant name")
             return
         }
         
         // Simple validation: Min should not be greater than Max
         if (moistureMin != null && moistureMax != null && moistureMin > moistureMax) {
-            _editState.value = PlantEditState.Error("Мін. вологість не може бути більшою за макс.")
+            _editState.value = PlantEditState.Error("Min moisture cannot be greater than max.")
             return
         }
         if (lightMin != null && lightMax != null && lightMin > lightMax) {
-            _editState.value = PlantEditState.Error("Мін. освітленість не може бути більшою за макс.")
+            _editState.value = PlantEditState.Error("Min light cannot be greater than max.")
             return
         }
 
@@ -138,12 +138,12 @@ class PlantEditViewModel : ViewModel() {
                 if (response.status.value in 200..299) {
                     _editState.value = PlantEditState.Saved
                 } else if (response.status.value == 400) {
-                    _editState.value = PlantEditState.Error("Цей пристрій вже підключено до іншої рослини")
+                    _editState.value = PlantEditState.Error("This device is already linked to another plant")
                 } else {
-                    _editState.value = PlantEditState.Error("Не вдалося зберегти. Спробуйте пізніше.")
+                    _editState.value = PlantEditState.Error("Failed to save. Please try again.")
                 }
             } catch (e: Exception) {
-                _editState.value = PlantEditState.Error("Помилка з'єднання. Перевірте інтернет.")
+                _editState.value = PlantEditState.Error("Connection error. Check your internet.")
             }
         }
     }
@@ -162,16 +162,16 @@ class PlantEditViewModel : ViewModel() {
         wateringMode: String
     ) {
         if (name.isBlank()) {
-            _editState.value = PlantEditState.Error("Введіть назву рослини")
+            _editState.value = PlantEditState.Error("Please enter a plant name")
             return
         }
 
         if (moistureMin != null && moistureMax != null && moistureMin > moistureMax) {
-            _editState.value = PlantEditState.Error("Мін. вологість не може бути більшою за макс.")
+            _editState.value = PlantEditState.Error("Min moisture cannot be greater than max.")
             return
         }
         if (lightMin != null && lightMax != null && lightMin > lightMax) {
-            _editState.value = PlantEditState.Error("Мін. освітленість не може бути більшою за макс.")
+            _editState.value = PlantEditState.Error("Min light cannot be greater than max.")
             return
         }
 
@@ -194,12 +194,12 @@ class PlantEditViewModel : ViewModel() {
                 if (response.status.value in 200..299) {
                     _editState.value = PlantEditState.Saved
                 } else if (response.status.value == 400) {
-                    _editState.value = PlantEditState.Error("Цей пристрій вже підключено до іншої рослини")
+                    _editState.value = PlantEditState.Error("This device is already linked to another plant")
                 } else {
-                    _editState.value = PlantEditState.Error("Не вдалося оновити. Спробуйте пізніше.")
+                    _editState.value = PlantEditState.Error("Failed to update. Please try again.")
                 }
             } catch (e: Exception) {
-                _editState.value = PlantEditState.Error("Помилка з'єднання. Перевірте інтернет.")
+                _editState.value = PlantEditState.Error("Connection error. Check your internet.")
             }
         }
     }

@@ -38,10 +38,10 @@ class WateringViewModel : ViewModel() {
                         history = historyResponse.body<List<WateringEventResponseDto>>().reversed()
                     )
                 } else {
-                    _state.value = WateringState.Error("Не вдалося завантажити дані поливу")
+                    _state.value = WateringState.Error("Failed to load watering data")
                 }
             } catch (e: Exception) {
-                _state.value = WateringState.Error("Помилка: ${e.message}")
+                _state.value = WateringState.Error("Error: ${e.message}")
             }
         }
     }

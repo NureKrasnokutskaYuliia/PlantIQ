@@ -46,8 +46,7 @@ data class ForgotPasswordRequestDto(
 )
 
 data class ForgotPasswordResponseDto(
-    @SerializedName("message") val message: String,
-    @SerializedName("code") val code: String
+    @SerializedName("message") val message: String
 )
 
 data class ResetPasswordRequestDto(

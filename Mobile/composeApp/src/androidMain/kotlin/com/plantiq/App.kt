@@ -190,37 +190,32 @@ fun App(startDestination: String = "login") {
 
                 composable("plant_analytics?id={id}&name={name}") { backStackEntry ->
                     val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
-                    val name = backStackEntry.arguments?.getString("name") ?: "Рослина"
+                    val name = backStackEntry.arguments?.getString("name") ?: "Plant"
                     AnalyticsScreen(plantName = name, plantId = id, onNavigateBack = { navController.popBackStack() })
                 }
 
                 composable("plant_watering?id={id}&name={name}") { backStackEntry ->
                     val id = backStackEntry.arguments?.getString("id")?.toIntOrNull() ?: 0
-                    val name = backStackEntry.arguments?.getString("name") ?: "Рослина"
+                    val name = backStackEntry.arguments?.getString("name") ?: "Plant"
                     WateringScreen(plantName = name, plantId = id, onNavigateBack = { navController.popBackStack() })
                 }
 
                 composable("forgot_password") {
                     ForgotPasswordScreen(
                         onNavigateBack = { navController.popBackStack() },
-                        onCodeSent = { email, code ->
+                        onCodeSent = { email ->
                             val encodedEmail = java.net.URLEncoder.encode(email, "UTF-8")
-                            val encodedCode = java.net.URLEncoder.encode(code, "UTF-8")
-                            navController.navigate("reset_password?email=$encodedEmail&code=$encodedCode")
+                            navController.navigate("reset_password?email=$encodedEmail")
                         }
                     )
                 }
 
-                composable("reset_password?email={email}&code={code}") { backStackEntry ->
+                composable("reset_password?email={email}") { backStackEntry ->
                     val email = java.net.URLDecoder.decode(
                         backStackEntry.arguments?.getString("email") ?: "", "UTF-8"
                     )
-                    val code = java.net.URLDecoder.decode(
-                        backStackEntry.arguments?.getString("code") ?: "", "UTF-8"
-                    )
                     ResetPasswordScreen(
                         email = email,
-                        prefillCode = code,
                         onNavigateBack = { navController.popBackStack() },
                         onSuccess = {
                             navController.navigate("login") {

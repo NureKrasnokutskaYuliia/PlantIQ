@@ -60,7 +60,7 @@ fun ProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Профіль") },
+                title = { Text("Profile") },
             )
         }
     ) { padding ->
@@ -99,7 +99,7 @@ fun ProfileScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Ім'я") },
+                label = { Text("Name") },
                 singleLine = true,
                 enabled = isEditing,
                 leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
@@ -140,7 +140,7 @@ fun ProfileScreen(
                         ) {
                             Icon(Icons.Default.Close, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text("Скасувати")
+                            Text("Cancel")
                         }
                         Button(
                             onClick = { viewModel.updateProfile(name, email) },
@@ -148,7 +148,7 @@ fun ProfileScreen(
                         ) {
                             Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text("Зберегти")
+                            Text("Save")
                         }
                     }
                 } else {
@@ -158,7 +158,7 @@ fun ProfileScreen(
                     ) {
                         Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
                         Spacer(Modifier.width(8.dp))
-                        Text("Редагувати профіль")
+                        Text("Edit Profile")
                     }
                 }
             }
@@ -175,7 +175,7 @@ fun ProfileScreen(
             if (profileState is ProfileState.Success && !isEditing) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Дані успішно оновлено!",
+                    text = "Profile updated successfully!",
                     color = MaterialTheme.colorScheme.primary,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
@@ -205,11 +205,11 @@ fun ProfileScreen(
                     Spacer(Modifier.width(12.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Пуш-сповіщення",
+                            text = "Push Notifications",
                             style = MaterialTheme.typography.bodyMedium
                         )
                         Text(
-                            text = if (notificationsEnabled) "Увімкнено" else "Вимкнено",
+                            text = if (notificationsEnabled) "Enabled" else "Disabled",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -231,7 +231,7 @@ fun ProfileScreen(
             ) {
                 Icon(Icons.Default.DevicesOther, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Мої пристрої")
+                Text("My Devices")
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -242,7 +242,7 @@ fun ProfileScreen(
             ) {
                 Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("Вийти з акаунту")
+                Text("Sign Out")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -253,7 +253,7 @@ fun ProfileScreen(
             ) {
                 Icon(Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(18.dp), tint = MaterialTheme.colorScheme.error)
                 Spacer(Modifier.width(8.dp))
-                Text("Видалити акаунт", color = MaterialTheme.colorScheme.error)
+                Text("Delete Account", color = MaterialTheme.colorScheme.error)
             }
         }
     }
@@ -262,22 +262,22 @@ fun ProfileScreen(
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
             icon = { Icon(Icons.Default.Warning, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-            title = { Text("Видалення акаунту") },
-            text = { Text("Ви впевнені, що хочете назавжди видалити цей акаунт? Відновити дані буде неможливо.") },
+            title = { Text("Delete Account") },
+            text = { Text("Are you sure you want to permanently delete this account? This action cannot be undone.") },
             confirmButton = {
                 Button(
-                    onClick = { 
+                    onClick = {
                         showDeleteDialog = false
                         viewModel.deleteAccount(onLogoutComplete = { onNavigateToLogin() })
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
-                    Text("Видалити")
+                    Text("Delete")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Скасувати")
+                    Text("Cancel")
                 }
             }
         )

@@ -26,12 +26,11 @@ import com.plantiq.viewmodel.ResetPasswordState
 @Composable
 fun ResetPasswordScreen(
     email: String,
-    prefillCode: String = "",
     onNavigateBack: () -> Unit,
     onSuccess: () -> Unit,
     viewModel: ForgotPasswordViewModel = viewModel()
 ) {
-    var code by remember { mutableStateOf(prefillCode) }
+    var code by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var newPasswordVisible by remember { mutableStateOf(false) }
@@ -54,14 +53,14 @@ fun ResetPasswordScreen(
         AlertDialog(
             onDismissRequest = {},
             icon = { Icon(Icons.Default.Lock, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            title = { Text("Пароль змінено!") },
-            text = { Text("Ваш пароль успішно оновлено. Тепер ви можете увійти з новим паролем.") },
+            title = { Text("Password Changed!") },
+            text = { Text("Your password has been updated successfully. You can now sign in with your new password.") },
             confirmButton = {
                 Button(onClick = {
                     viewModel.resetResetState()
                     onSuccess()
                 }) {
-                    Text("Увійти")
+                    Text("Sign In")
                 }
             }
         )
@@ -70,10 +69,10 @@ fun ResetPasswordScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Новий пароль") },
+                title = { Text("New Password") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -89,7 +88,7 @@ fun ResetPasswordScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Код надіслано на:",
+                text = "Code sent to:",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -104,13 +103,13 @@ fun ResetPasswordScreen(
             OutlinedTextField(
                 value = code,
                 onValueChange = { if (it.length <= 6) code = it },
-                label = { Text("6-значний код") },
+                label = { Text("6-digit code") },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 isError = code.isNotEmpty() && code.length < 6,
                 supportingText = {
                     if (code.isNotEmpty() && code.length < 6) {
-                        Text("Код складається з 6 цифр", color = MaterialTheme.colorScheme.error)
+                        Text("Code must be 6 digits", color = MaterialTheme.colorScheme.error)
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -121,7 +120,7 @@ fun ResetPasswordScreen(
             OutlinedTextField(
                 value = newPassword,
                 onValueChange = { newPassword = it },
-                label = { Text("Новий пароль") },
+                label = { Text("New password") },
                 singleLine = true,
                 isError = isPasswordInvalid,
                 visualTransformation = if (newPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -130,13 +129,13 @@ fun ResetPasswordScreen(
                     IconButton(onClick = { newPasswordVisible = !newPasswordVisible }) {
                         Icon(
                             imageVector = if (newPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            contentDescription = if (newPasswordVisible) "Сховати пароль" else "Показати пароль"
+                            contentDescription = if (newPasswordVisible) "Hide password" else "Show password"
                         )
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = {
-                    if (isPasswordInvalid) Text("Мінімум 6 символів", color = MaterialTheme.colorScheme.error)
+                    if (isPasswordInvalid) Text("Minimum 6 characters", color = MaterialTheme.colorScheme.error)
                 }
             )
 
@@ -145,7 +144,7 @@ fun ResetPasswordScreen(
             OutlinedTextField(
                 value = confirmPassword,
                 onValueChange = { confirmPassword = it },
-                label = { Text("Підтвердіть пароль") },
+                label = { Text("Confirm password") },
                 singleLine = true,
                 isError = isConfirmInvalid,
                 visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -154,13 +153,13 @@ fun ResetPasswordScreen(
                     IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
                         Icon(
                             imageVector = if (confirmPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                            contentDescription = if (confirmPasswordVisible) "Сховати пароль" else "Показати пароль"
+                            contentDescription = if (confirmPasswordVisible) "Hide password" else "Show password"
                         )
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = {
-                    if (isConfirmInvalid) Text("Паролі не співпадають", color = MaterialTheme.colorScheme.error)
+                    if (isConfirmInvalid) Text("Passwords do not match", color = MaterialTheme.colorScheme.error)
                 }
             )
 
@@ -174,7 +173,7 @@ fun ResetPasswordScreen(
                     modifier = Modifier.fillMaxWidth().height(50.dp),
                     enabled = isFormValid
                 ) {
-                    Text("Змінити пароль")
+                    Text("Change Password")
                 }
             }
 

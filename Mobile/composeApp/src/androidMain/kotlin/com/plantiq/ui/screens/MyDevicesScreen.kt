@@ -50,10 +50,10 @@ class DevicesListViewModel : ViewModel() {
                     val all = response.body<List<DeviceResponseDto>>()
                     _state.value = DevicesListState.Success(all.filter { it.userId == userId })
                 } else {
-                    _state.value = DevicesListState.Error("Не вдалося завантажити пристрої.")
+                    _state.value = DevicesListState.Error("Failed to load devices.")
                 }
             } catch (e: Exception) {
-                _state.value = DevicesListState.Error("Помилка з'єднання.")
+                _state.value = DevicesListState.Error("Connection error.")
             }
         }
     }
@@ -90,10 +90,10 @@ fun MyDevicesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Мої пристрої") },
+                title = { Text("My Devices") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -107,7 +107,7 @@ fun MyDevicesScreen(
                 onClick = onAddDevice,
                 containerColor = MaterialTheme.colorScheme.primary
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Додати пристрій", tint = MaterialTheme.colorScheme.onPrimary)
+                Icon(Icons.Default.Add, contentDescription = "Add device", tint = MaterialTheme.colorScheme.onPrimary)
             }
         }
     ) { padding ->
@@ -118,7 +118,7 @@ fun MyDevicesScreen(
                 is DevicesListState.Success -> {
                     if (s.devices.isEmpty()) {
                         Text(
-                            "Зареєструйте свій перший пристрій",
+                            "Register your first device",
                             style = MaterialTheme.typography.titleLarge.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Medium),
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                             modifier = Modifier.align(Alignment.Center),
@@ -142,8 +142,8 @@ fun MyDevicesScreen(
     deviceToDelete?.let { device ->
         AlertDialog(
             onDismissRequest = { deviceToDelete = null },
-            title = { Text("Видалити пристрій") },
-            text = { Text("Видалити «${device.name}»? Пов'язані дані рослини залишаться, але пристрій буде відключено.") },
+            title = { Text("Delete Device") },
+            text = { Text("Delete \"${device.name}\"? Plant data will remain, but the device will be disconnected.") },
             confirmButton = {
                 Button(
                     onClick = {
@@ -151,10 +151,10 @@ fun MyDevicesScreen(
                         deviceToDelete = null
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-                ) { Text("Видалити") }
+                ) { Text("Delete") }
             },
             dismissButton = {
-                TextButton(onClick = { deviceToDelete = null }) { Text("Скасувати") }
+                TextButton(onClick = { deviceToDelete = null }) { Text("Cancel") }
             }
         )
     }
@@ -180,19 +180,19 @@ fun DeviceCard(device: DeviceResponseDto, onDelete: () -> Unit) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(device.name, style = MaterialTheme.typography.titleMedium)
                 if (!device.model.isNullOrBlank()) {
-                    Text("Модель: ${device.model}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("Model: ${device.model}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 if (!device.serialNumber.isNullOrBlank()) {
                     Text("S/N: ${device.serialNumber}", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Text(
-                    text = "Статус: ${device.status?.uppercase() ?: "UNKNOWN"}",
+                    text = "Status: ${device.status?.uppercase() ?: "UNKNOWN"}",
                     style = MaterialTheme.typography.labelSmall,
                     color = if (device.status?.lowercase() == "active") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.secondary
                 )
             }
             IconButton(onClick = onDelete) {
-                Icon(Icons.Default.Delete, contentDescription = "Видалити", tint = MaterialTheme.colorScheme.error)
+                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
             }
         }
     }

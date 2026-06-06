@@ -41,10 +41,10 @@ fun WateringScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Полив: $plantName") },
+                title = { Text("Watering: $plantName") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -70,18 +70,18 @@ fun WateringScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
-                        Text("Ручний запуск", style = MaterialTheme.typography.titleMedium)
-                        Text("Полити зараз", style = MaterialTheme.typography.bodySmall)
+                        Text("Manual Trigger", style = MaterialTheme.typography.titleMedium)
+                        Text("Water now", style = MaterialTheme.typography.bodySmall)
                     }
                     Button(onClick = { viewModel.waterNow(plantId) }) {
                         Icon(Icons.Default.WaterDrop, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
-                        Text("Полити")
+                        Text("Water")
                     }
                 }
             }
 
-            Text("Розклади поливу", style = MaterialTheme.typography.titleMedium)
+            Text("Watering Schedules", style = MaterialTheme.typography.titleMedium)
 
             when (val s = state) {
                 is WateringState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
@@ -105,25 +105,25 @@ fun WateringScreen(
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Column {
-                                        Text("${schedule.startTime} | ${schedule.amountMl} мл", style = MaterialTheme.typography.bodyLarge)
-                                        val daysStr = if (schedule.daysOfWeek.size == 7) "Щодня" 
+                                        Text("${schedule.startTime} | ${schedule.amountMl} ml", style = MaterialTheme.typography.bodyLarge)
+                                        val daysStr = if (schedule.daysOfWeek.size == 7) "Every day"
                                                      else schedule.daysOfWeek.sorted().joinToString(", ") { dayNumToName(it) }
-                                        Text("$daysStr | ${schedule.repeatCount} раз(и)", style = MaterialTheme.typography.bodySmall)
-                                        Text("Кожні ${schedule.intervalHours} год", style = MaterialTheme.typography.bodySmall)
+                                        Text("$daysStr | ${schedule.repeatCount} time(s)", style = MaterialTheme.typography.bodySmall)
+                                        Text("Every ${schedule.intervalHours} h", style = MaterialTheme.typography.bodySmall)
                                     }
                                     IconButton(onClick = { viewModel.deleteSchedule(plantId, schedule.scheduleId) }) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Видалити", tint = MaterialTheme.colorScheme.error)
+                                        Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
                                     }
                                 }
                             }
                         }
 
                         if (s.schedules.isEmpty()) {
-                            item { Text("Немає активних розкладів", style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) }
+                            item { Text("No active schedules", style = MaterialTheme.typography.bodySmall, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()) }
                         }
 
                         item { Spacer(Modifier.height(16.dp)) }
-                        item { Text("Історія поливів", style = MaterialTheme.typography.titleMedium) }
+                        item { Text("Watering History", style = MaterialTheme.typography.titleMedium) }
 
                         items(s.history) { event ->
                             Row(
@@ -132,9 +132,9 @@ fun WateringScreen(
                             ) {
                                 Column {
                                     Text(event.timestamp.take(16).replace("T", " "), style = MaterialTheme.typography.labelSmall)
-                                    Text(if (event.mode == "Auto") "Автоматично" else "Вручну", style = MaterialTheme.typography.bodySmall)
+                                    Text(if (event.mode == "Auto") "Automatic" else "Manual", style = MaterialTheme.typography.bodySmall)
                                 }
-                                Text("${event.amountMl} мл", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+                                Text("${event.amountMl} ml", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
                             }
                             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f))
                         }
@@ -149,7 +149,7 @@ fun WateringScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
-                Text("Додати розклад")
+                Text("Add Schedule")
             }
         }
     }
@@ -206,37 +206,37 @@ fun WateringScheduleDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(if (schedule != null) "Редагувати розклад" else "Новий розклад") },
+        title = { Text(if (schedule != null) "Edit Schedule" else "New Schedule") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = startTime,
                     onValueChange = { startTime = it },
-                    label = { Text("Час початку (ГГ:ХХ:СС)") },
+                    label = { Text("Start time (HH:MM:SS)") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(
                         value = intervalStr,
                         onValueChange = { intervalStr = it },
-                        label = { Text("Інтервал (год)") },
+                        label = { Text("Interval (h)") },
                         modifier = Modifier.weight(1f)
                     )
                     OutlinedTextField(
                         value = repeatCountStr,
                         onValueChange = { repeatCountStr = it },
-                        label = { Text("Повтори") },
+                        label = { Text("Repeats") },
                         modifier = Modifier.weight(1f)
                     )
                 }
                 OutlinedTextField(
                     value = amountStr,
                     onValueChange = { amountStr = it },
-                    label = { Text("Кількість (мл)") },
+                    label = { Text("Amount (ml)") },
                     modifier = Modifier.fillMaxWidth()
                 )
                 
-                Text("Дні тижня", style = MaterialTheme.typography.labelMedium)
+                Text("Days of week", style = MaterialTheme.typography.labelMedium)
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -264,12 +264,12 @@ fun WateringScheduleDialog(
                 val repeats = repeatCountStr.toIntOrNull() ?: 1
                 onConfirm(startTime, interval, amount, selectedDays.toList(), repeats)
             }) {
-                Text("Зберегти")
+                Text("Save")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Скасувати")
+                Text("Cancel")
             }
         }
     )
@@ -277,13 +277,13 @@ fun WateringScheduleDialog(
 
 fun dayNumToName(dayNum: Int): String {
     return when (dayNum) {
-        1 -> "Пн"
-        2 -> "Вт"
-        3 -> "Ср"
-        4 -> "Чт"
-        5 -> "Пт"
-        6 -> "Сб"
-        7 -> "Нд"
+        1 -> "Mon"
+        2 -> "Tue"
+        3 -> "Wed"
+        4 -> "Thu"
+        5 -> "Fri"
+        6 -> "Sat"
+        7 -> "Sun"
         else -> ""
     }
 }

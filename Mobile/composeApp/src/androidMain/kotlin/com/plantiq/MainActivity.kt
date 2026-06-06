@@ -60,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     tokenManager.lastActivityTimeFlow
                 ) { token, lastTime ->
                     val currentTime = System.currentTimeMillis()
-                    val timeoutMillis = 60 * 60 * 1000L // 1 година
+                    val timeoutMillis = 60 * 60 * 1000L // 1 hour
 
                     if (token.isNullOrEmpty()) {
                         "login"
@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            // Фонова перевірка сесії кожні 30 секунд
+            // Background session check every 30 seconds
             LaunchedEffect(startDestination.value) {
                 if (startDestination.value == "plants_list") {
                     while (true) {

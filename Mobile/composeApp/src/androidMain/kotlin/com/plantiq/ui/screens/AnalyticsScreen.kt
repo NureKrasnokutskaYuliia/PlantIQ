@@ -38,10 +38,10 @@ fun AnalyticsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Аналітика: $plantName") },
+                title = { Text("Analytics: $plantName") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -64,24 +64,24 @@ fun AnalyticsScreen(
                 is AnalyticsState.Error -> Text(s.message, color = MaterialTheme.colorScheme.error, textAlign = TextAlign.Center)
                 is AnalyticsState.Success -> {
                     if (s.history.isEmpty()) {
-                        Text("Немає даних для побудови графіків", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                        Text("No data available for charts", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                     } else {
                         AnalyticsCard(
-                            title = "💧 Вологість ґрунту (%)",
+                            title = "💧 Soil Moisture (%)",
                             data = s.history,
                             getValue = { it.soilMoisture?.toFloat() ?: 0f },
                             color = Color(0xFF2196F3)
                         )
 
                         AnalyticsCard(
-                            title = "☀️ Інтенсивність світла (%)",
+                            title = "☀️ Light Intensity (%)",
                             data = s.history,
                             getValue = { it.lightIntensity?.toFloat() ?: 0f },
                             color = Color(0xFFFFC107)
                         )
                         
                         // Data Table
-                        Text("Останні вимірювання", style = MaterialTheme.typography.titleMedium)
+                        Text("Recent Readings", style = MaterialTheme.typography.titleMedium)
                         Card {
                             Column(modifier = Modifier.padding(8.dp)) {
                                 s.history.reversed().take(10).forEach { entry ->

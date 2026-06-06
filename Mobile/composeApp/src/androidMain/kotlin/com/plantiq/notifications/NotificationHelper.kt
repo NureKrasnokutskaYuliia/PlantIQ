@@ -10,8 +10,8 @@ import com.plantiq.R
 
 object NotificationHelper {
     const val CHANNEL_ID = "plantiq_alerts_v2"
-    const val CHANNEL_NAME = "PlantIQ Сповіщення"
-    const val CHANNEL_DESC = "Сповіщення про стан рослин та пристроїв"
+    const val CHANNEL_NAME = "PlantIQ Notifications"
+    const val CHANNEL_DESC = "Notifications about plant and device status"
 
     fun createChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -42,11 +42,11 @@ object NotificationHelper {
     }
 
     fun typeToTitle(type: Int): String = when (type) {
-        0 -> "💧 Низька вологість"
-        1 -> "💧 Висока вологість"
-        2 -> "☀️ Мало світла"
-        3 -> "☀️ Забагато світла"
-        4 -> "🔋 Низький заряд батареї"
+        0 -> "💧 Low moisture"
+        1 -> "💧 High moisture"
+        2 -> "☀️ Low light"
+        3 -> "☀️ Too much light"
+        4 -> "🔋 Low battery"
         else -> "🌿 PlantIQ"
     }
 

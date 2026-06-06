@@ -22,7 +22,7 @@ class DeviceViewModel : ViewModel() {
 
     fun createDevice(name: String, model: String, serialNumber: String) {
         if (name.isBlank()) {
-            _state.value = DeviceAddState.Error("Введіть назву пристрою")
+            _state.value = DeviceAddState.Error("Please enter a device name")
             return
         }
         viewModelScope.launch {
@@ -37,13 +37,13 @@ class DeviceViewModel : ViewModel() {
                 if (response.status.value in 200..299) {
                     _state.value = DeviceAddState.Saved
                 } else {
-                    _state.value = DeviceAddState.Error("Не вдалося зареєструвати пристрій. Спробуйте ще раз.")
+                    _state.value = DeviceAddState.Error("Failed to register device. Please try again.")
                 }
             } catch (e: Exception) {
                 val msg = if (e.localizedMessage?.contains("timeout", ignoreCase = true) == true)
-                    "Немає зв'язку з сервером. Перевірте інтернет."
+                    "No server connection. Check your internet."
                 else
-                    "Помилка з'єднання. Спробуйте пізніше."
+                    "Connection error. Please try again."
                 _state.value = DeviceAddState.Error(msg)
             }
         }

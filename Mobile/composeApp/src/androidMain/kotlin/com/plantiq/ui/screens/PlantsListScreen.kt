@@ -38,7 +38,7 @@ fun PlantsListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Мої рослини") },
+                title = { Text("My Plants") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -53,7 +53,7 @@ fun PlantsListScreen(
                             Box(contentAlignment = androidx.compose.ui.Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.Person,
-                                    contentDescription = "Профіль",
+                                    contentDescription = "Profile",
                                     tint = MaterialTheme.colorScheme.onPrimary,
                                     modifier = Modifier.size(20.dp)
                                 )
@@ -69,7 +69,7 @@ fun PlantsListScreen(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Додати рослину")
+                Icon(Icons.Default.Add, contentDescription = "Add plant")
             }
         }
     ) { padding ->
@@ -81,7 +81,7 @@ fun PlantsListScreen(
                 is PlantsState.Success -> {
                     if (state.plants.isEmpty()) {
                         Text(
-                            text = "Додайте свою першу рослину",
+                            text = "Add your first plant",
                             style = MaterialTheme.typography.titleLarge.copy(
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
                             ),
@@ -133,7 +133,7 @@ fun PlantItemCard(plant: PlantResponseDto, onClick: () -> Unit, onEdit: () -> Un
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = if (!plant.species.isNullOrBlank()) plant.species else "Вид не вказано",
+                    text = if (!plant.species.isNullOrBlank()) plant.species else "Species not specified",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -148,7 +148,7 @@ fun PlantItemCard(plant: PlantResponseDto, onClick: () -> Unit, onEdit: () -> Un
                 if (plant.deviceId != null) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "📡 Пристрій підключено",
+                        text = "📡 Device connected",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -157,7 +157,7 @@ fun PlantItemCard(plant: PlantResponseDto, onClick: () -> Unit, onEdit: () -> Un
             IconButton(onClick = onEdit) {
                 Icon(
                     imageVector = Icons.Default.Edit,
-                    contentDescription = "Редагувати",
+                    contentDescription = "Edit",
                     tint = MaterialTheme.colorScheme.primary
                 )
             }

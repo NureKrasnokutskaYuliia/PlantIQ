@@ -29,7 +29,7 @@ fun PlantEditScreen(
     viewModel: PlantEditViewModel = viewModel()
 ) {
     val isEdit = existingPlant != null
-    val title = if (isEdit) "Редагувати рослину" else "Нова рослина"
+    val title = if (isEdit) "Edit Plant" else "New Plant"
 
     val context = LocalContext.current
     val tokenManager = remember { TokenManager(context) }
@@ -71,7 +71,7 @@ fun PlantEditScreen(
                 title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -92,7 +92,7 @@ fun PlantEditScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Назва рослини *") },
+                label = { Text("Plant name *") },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 isError = name.isBlank() && editState is PlantEditState.Error
@@ -106,7 +106,7 @@ fun PlantEditScreen(
                 OutlinedTextField(
                     value = species,
                     onValueChange = { species = it },
-                    label = { Text("Вид (виберіть зі списку або введіть свій)") },
+                    label = { Text("Species (select from list or type your own)") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth().menuAnchor(),
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = speciesDropdownExpanded) },
@@ -129,7 +129,7 @@ fun PlantEditScreen(
                                     Column {
                                         Text(item.name)
                                         Text(
-                                            "Оптимально: ${item.defaultMoistureMin?.toInt()}% волог., ${item.defaultLightMin?.toInt()}% світла",
+                                            "Optimal: ${item.defaultMoistureMin?.toInt()}% moist., ${item.defaultLightMin?.toInt()}% light",
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
@@ -152,7 +152,7 @@ fun PlantEditScreen(
             OutlinedTextField(
                 value = notes,
                 onValueChange = { notes = it },
-                label = { Text("Нотатки (необов'язково)") },
+                label = { Text("Notes (optional)") },
                 minLines = 3,
                 maxLines = 5,
                 modifier = Modifier.fillMaxWidth()
@@ -160,7 +160,7 @@ fun PlantEditScreen(
 
             // Thresholds Section
             Text(
-                text = "Оптимальні умови (пороги сповіщень)",
+                text = "Optimal Conditions (alert thresholds)",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -172,14 +172,14 @@ fun PlantEditScreen(
                 OutlinedTextField(
                     value = moistureMin,
                     onValueChange = { moistureMin = it },
-                    label = { Text("Мін. % волог.") },
+                    label = { Text("Min % moist.") },
                     modifier = Modifier.weight(1f),
                     prefix = { Text("% ") }
                 )
                 OutlinedTextField(
                     value = moistureMax,
                     onValueChange = { moistureMax = it },
-                    label = { Text("Макс. % волог.") },
+                    label = { Text("Max % moist.") },
                     modifier = Modifier.weight(1f),
                     prefix = { Text("% ") }
                 )
@@ -192,14 +192,14 @@ fun PlantEditScreen(
                 OutlinedTextField(
                     value = lightMin,
                     onValueChange = { lightMin = it },
-                    label = { Text("Мін. % освіт.") },
+                    label = { Text("Min % light") },
                     modifier = Modifier.weight(1f),
                     prefix = { Text("% ") }
                 )
                 OutlinedTextField(
                     value = lightMax,
                     onValueChange = { lightMax = it },
-                    label = { Text("Макс. % освіт.") },
+                    label = { Text("Max % light") },
                     modifier = Modifier.weight(1f),
                     prefix = { Text("% ") }
                 )
@@ -207,15 +207,14 @@ fun PlantEditScreen(
 
             // Watering Mode Section
             Text(
-                text = "Режим поливу",
+                text = "Watering Mode",
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary
             )
             
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 val modes = listOf("Automatic", "Manual", "Scheduled")
-                val modesUk = listOf("Автоматично", "Вручну", "За розкладом")
-                modes.forEachIndexed { index, mode ->
+                modes.forEach { mode ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
@@ -224,13 +223,13 @@ fun PlantEditScreen(
                             selected = (wateringMode == mode),
                             onClick = { wateringMode = mode }
                         )
-                        Text(text = modesUk[index], style = MaterialTheme.typography.bodyLarge)
+                        Text(text = mode, style = MaterialTheme.typography.bodyLarge)
                     }
                 }
             }
 
             Text(
-                text = "Підв'язати пристрій",
+                text = "Link Device",
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -241,12 +240,12 @@ fun PlantEditScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
-                    Text("Завантаження пристроїв...", style = MaterialTheme.typography.bodyMedium)
+                    Text("Loading devices...", style = MaterialTheme.typography.bodyMedium)
                 }
             } else {
                 val currentDeviceName = availableDevices
                     .find { it.deviceId == selectedDeviceId }?.name
-                    ?: if (selectedDeviceId != null) "ID: $selectedDeviceId (зайнятий)" else "Без пристрою"
+                    ?: if (selectedDeviceId != null) "ID: $selectedDeviceId (occupied)" else "No device"
 
                 ExposedDropdownMenuBox(
                     expanded = deviceDropdownExpanded,
@@ -256,7 +255,7 @@ fun PlantEditScreen(
                         readOnly = true,
                         value = currentDeviceName,
                         onValueChange = {},
-                        label = { Text("Пристрій") },
+                        label = { Text("Device") },
                         trailingIcon = {
                             Icon(Icons.Default.ArrowDropDown, contentDescription = null)
                         },
@@ -270,7 +269,7 @@ fun PlantEditScreen(
                     ) {
                         // "No device" option
                         DropdownMenuItem(
-                            text = { Text("Без пристрою") },
+                            text = { Text("No device") },
                             onClick = {
                                 selectedDeviceId = null
                                 deviceDropdownExpanded = false
@@ -300,7 +299,7 @@ fun PlantEditScreen(
                             DropdownMenuItem(
                                 text = {
                                     Text(
-                                        "Вільних пристроїв немає",
+                                        "No available devices",
                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 },
@@ -365,7 +364,7 @@ fun PlantEditScreen(
                 ) {
                     Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(8.dp))
-                    Text(if (isEdit) "Зберегти зміни" else "Додати рослину")
+                    Text(if (isEdit) "Save Changes" else "Add Plant")
                 }
             }
         }

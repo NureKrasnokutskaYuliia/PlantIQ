@@ -190,11 +190,9 @@ namespace API.Controllers
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
         {
             var code = await _userService.GeneratePasswordResetCodeAsync(dto.Email);
-            if (code == null) return NotFound(new { message = "Користувача з такою поштою не знайдено." });
+            if (code == null) return NotFound(new { message = "No account found with that email address." });
 
-            // In production: send code via email (SMTP/SendGrid).
-            // For demo: return code directly in response.
-            return Ok(new { message = "Код підтвердження надіслано.", code });
+            return Ok(new { message = "A verification code has been sent to your email." });
         }
 
         /// <summary>
@@ -210,7 +208,7 @@ namespace API.Controllers
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
             var success = await _userService.ResetPasswordAsync(dto.Email, dto.Code, dto.NewPassword);
-            if (!success) return BadRequest(new { message = "Невірний або застарілий код підтвердження." });
+            if (!success) return BadRequest(new { message = "Invalid or expired verification code." });
             return NoContent();
         }
 

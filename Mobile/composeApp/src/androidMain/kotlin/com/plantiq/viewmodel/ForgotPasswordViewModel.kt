@@ -2,9 +2,7 @@ package com.plantiq.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.plantiq.data.model.ForgotPasswordResponseDto
 import com.plantiq.data.remote.ApiClient
-import io.ktor.client.call.body
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +11,7 @@ import kotlinx.coroutines.launch
 sealed class ForgotPasswordState {
     object Idle : ForgotPasswordState()
     object Loading : ForgotPasswordState()
-    data class CodeSent(val email: String, val code: String) : ForgotPasswordState()
+    data class CodeSent(val email: String) : ForgotPasswordState()
     data class Error(val message: String) : ForgotPasswordState()
 }
 
@@ -34,34 +32,31 @@ class ForgotPasswordViewModel : ViewModel() {
 
     fun sendResetCode(email: String) {
         if (email.isBlank()) {
-            _forgotState.value = ForgotPasswordState.Error("Введіть email")
+            _forgotState.value = ForgotPasswordState.Error("Please enter your email")
             return
         }
         viewModelScope.launch {
             _forgotState.value = ForgotPasswordState.Loading
             try {
                 val response = ApiClient.api.forgotPassword(email)
-                if (response.status.value == 200) {
-                    val body = response.body<ForgotPasswordResponseDto>()
-                    _forgotState.value = ForgotPasswordState.CodeSent(email, body.code)
-                } else if (response.status.value == 404) {
-                    _forgotState.value = ForgotPasswordState.Error("Користувача з такою поштою не знайдено.")
-                } else {
-                    _forgotState.value = ForgotPasswordState.Error("Помилка сервера. Спробуйте пізніше.")
+                when (response.status.value) {
+                    200 -> _forgotState.value = ForgotPasswordState.CodeSent(email)
+                    404 -> _forgotState.value = ForgotPasswordState.Error("No account found with that email address.")
+                    else -> _forgotState.value = ForgotPasswordState.Error("Server error. Please try again later.")
                 }
             } catch (e: Exception) {
-                _forgotState.value = ForgotPasswordState.Error("Немає зв'язку з сервером.")
+                _forgotState.value = ForgotPasswordState.Error("No connection to server.")
             }
         }
     }
 
     fun resetPassword(email: String, code: String, newPassword: String, confirmPassword: String) {
         if (newPassword != confirmPassword) {
-            _resetState.value = ResetPasswordState.Error("Паролі не співпадають")
+            _resetState.value = ResetPasswordState.Error("Passwords do not match")
             return
         }
         if (newPassword.length < 6) {
-            _resetState.value = ResetPasswordState.Error("Мінімум 6 символів")
+            _resetState.value = ResetPasswordState.Error("Minimum 6 characters required")
             return
         }
         viewModelScope.launch {
@@ -71,10 +66,10 @@ class ForgotPasswordViewModel : ViewModel() {
                 if (response.status.value == 204) {
                     _resetState.value = ResetPasswordState.Success
                 } else {
-                    _resetState.value = ResetPasswordState.Error("Невірний або застарілий код підтвердження.")
+                    _resetState.value = ResetPasswordState.Error("Invalid or expired verification code.")
                 }
             } catch (e: Exception) {
-                _resetState.value = ResetPasswordState.Error("Немає зв'язку з сервером.")
+                _resetState.value = ResetPasswordState.Error("No connection to server.")
             }
         }
     }

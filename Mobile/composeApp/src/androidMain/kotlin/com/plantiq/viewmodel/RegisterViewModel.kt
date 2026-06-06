@@ -38,18 +38,18 @@ class RegisterViewModel : ViewModel() {
                         val body: LoginResponseDto = loginResponse.body()
                         _registerState.value = RegisterState.Success(body.user, body.token)
                     } else {
-                        _registerState.value = RegisterState.Error("Реєстрація успішна, але автоматичний вхід не вдався. Зайдіть вручну.")
+                        _registerState.value = RegisterState.Error("Registration successful, but auto-login failed. Please sign in manually.")
                     }
                 } else if (response.status.value == 400 || response.status.value == 409) {
-                    _registerState.value = RegisterState.Error("Така пошта або ім'я вже зареєстровані.")
+                    _registerState.value = RegisterState.Error("This email or name is already registered.")
                 } else {
-                    _registerState.value = RegisterState.Error("Не вдалося зареєструватись, спробуйте пізніше.")
+                    _registerState.value = RegisterState.Error("Registration failed. Please try again.")
                 }
             } catch (e: Exception) {
                 val errorMsg = if (e.localizedMessage?.contains("timeout", ignoreCase = true) == true) {
-                    "Перше з'єднання з сервером. Зачекайте хвилинку..."
+                    "First connection to server. Please wait a moment..."
                 } else {
-                    "Немає зв'язку з сервером."
+                    "No connection to server."
                 }
                 _registerState.value = RegisterState.Error(errorMsg)
             }

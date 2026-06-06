@@ -53,10 +53,10 @@ class PlantDetailViewModel : ViewModel() {
                         _sensorState.value = SensorState.Success(list.first())
                     }
                 } else {
-                    _sensorState.value = SensorState.Error("Не вдалося отримати дані (${response.status.value})")
+                    _sensorState.value = SensorState.Error("Failed to fetch data (${response.status.value})")
                 }
             } catch (e: Exception) {
-                _sensorState.value = SensorState.Error("Помилка з'єднання: ${e.message}")
+                _sensorState.value = SensorState.Error("Connection error: ${e.message}")
             }
         }
     }
@@ -105,12 +105,12 @@ fun PlantDetailScreen(
                 title = { Text(plant.name) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
                     IconButton(onClick = onEdit) {
-                        Icon(Icons.Default.Edit, contentDescription = "Редагувати")
+                        Icon(Icons.Default.Edit, contentDescription = "Edit")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -131,13 +131,13 @@ fun PlantDetailScreen(
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text("🌿 ${plant.name}", style = MaterialTheme.typography.titleLarge)
-                    if (!plant.species.isNullOrBlank()) Text("Вид: ${plant.species}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    if (!plant.notes.isNullOrBlank()) Text("Нотатки: ${plant.notes}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    if (plant.deviceId != null) Text("📡 Пристрій підключено", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
+                    if (!plant.species.isNullOrBlank()) Text("Species: ${plant.species}", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (!plant.notes.isNullOrBlank()) Text("Notes: ${plant.notes}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (plant.deviceId != null) Text("📡 Device connected", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
                 }
             }
 
-            Text("Керування та Аналітика", style = MaterialTheme.typography.titleMedium)
+            Text("Controls & Analytics", style = MaterialTheme.typography.titleMedium)
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -148,25 +148,25 @@ fun PlantDetailScreen(
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
                 ) {
-                    Text("📈 Аналітика")
+                    Text("📈 Analytics")
                 }
                 Button(
                     onClick = onNavigateToWatering,
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)
                 ) {
-                    Text("💧 Полив")
+                    Text("💧 Watering")
                 }
             }
 
-            Text("Дані з датчиків", style = MaterialTheme.typography.titleMedium)
+            Text("Sensor Data", style = MaterialTheme.typography.titleMedium)
 
             when (val s = sensorState) {
                 is SensorState.Loading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
                 is SensorState.NoData -> {
                     Card(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            "Даних ще немає. Переконайтесь, що пристрій підключений та надсилає вимірювання.",
+                            "No data yet. Make sure the device is connected and sending readings.",
                             modifier = Modifier.padding(16.dp),
                             textAlign = TextAlign.Center,
                             style = MaterialTheme.typography.bodyMedium,
@@ -180,7 +180,7 @@ fun PlantDetailScreen(
 
                     d.soilMoisture?.let { moisture ->
                         SensorCard(
-                            label = "💧 Вологість ґрунту",
+                            label = "💧 Soil Moisture",
                             value = "${moisture.toInt()}%",
                             progress = (moisture / 100.0).toFloat().coerceIn(0f, 1f),
                             optimalMin = plant.optimalMoistureMin?.toFloat()?.div(100f),
@@ -190,7 +190,7 @@ fun PlantDetailScreen(
 
                     d.lightIntensity?.let { light ->
                         SensorCard(
-                            label = "☀️ Освітлення",
+                            label = "☀️ Light Intensity",
                             value = "${light.toInt()}%",
                             progress = (light / 100.0).toFloat().coerceIn(0f, 1f),
                             optimalMin = plant.optimalLightMin?.toFloat()?.div(100f),
@@ -210,7 +210,7 @@ fun PlantDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text("🔋 Заряд батареї", style = MaterialTheme.typography.bodyLarge)
+                                Text("🔋 Battery Level", style = MaterialTheme.typography.bodyLarge)
                                 Text(
                                     "${battery.toInt()}%",
                                     style = MaterialTheme.typography.titleMedium,
@@ -221,7 +221,7 @@ fun PlantDetailScreen(
                     }
 
                     Text(
-                        "Останнє оновлення: ${d.timestamp.take(16).replace("T", " ")}",
+                        "Last updated: ${d.timestamp.take(16).replace("T", " ")}",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -233,7 +233,7 @@ fun PlantDetailScreen(
                         Button(
                             onClick = { viewModel.loadLatest(plant.plantId) },
                             modifier = Modifier.weight(1f)
-                        ) { Text("🔄 Оновити") }
+                        ) { Text("🔄 Refresh") }
 
                         if (plant.deviceId != null) {
                             OutlinedButton(
@@ -244,7 +244,7 @@ fun PlantDetailScreen(
                                 if (isTesting) {
                                     CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
                                 } else {
-                                    Text("🧪 Тест пуш")
+                                    Text("🧪 Test Push")
                                 }
                             }
                         }
@@ -276,7 +276,7 @@ fun SensorCard(label: String, value: String, progress: Float, optimalMin: Float?
             )
             if (optimalMin != null && optimalMax != null) {
                 Text(
-                    "Оптимально: ${(optimalMin * 100).toInt()}–${(optimalMax * 100).toInt()}%",
+                    "Optimal: ${(optimalMin * 100).toInt()}–${(optimalMax * 100).toInt()}%",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

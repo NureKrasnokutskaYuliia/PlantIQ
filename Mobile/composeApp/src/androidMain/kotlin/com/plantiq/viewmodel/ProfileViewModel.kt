@@ -29,7 +29,7 @@ class ProfileViewModel(private val tokenManager: TokenManager) : ViewModel() {
             try {
                 val userId = tokenManager.userIdFlow.firstOrNull()
                 if (userId == null) {
-                    _profileState.value = ProfileState.Error("Користувач не знайдений")
+                    _profileState.value = ProfileState.Error("User not found.")
                     return@launch
                 }
 
@@ -40,15 +40,15 @@ class ProfileViewModel(private val tokenManager: TokenManager) : ViewModel() {
                     tokenManager.updateProfileData(name, email)
                     _profileState.value = ProfileState.Success
                 } else if (response.status.value == 400 || response.status.value == 409) {
-                    _profileState.value = ProfileState.Error("Такі дані вже використовуються іншим користувачем.")
+                    _profileState.value = ProfileState.Error("This data is already in use by another account.")
                 } else {
-                    _profileState.value = ProfileState.Error("Не вдалося оновити дані. Спробуйте пізніше.")
+                    _profileState.value = ProfileState.Error("Failed to update profile. Please try again.")
                 }
             } catch (e: Exception) {
                 val errorMsg = if (e.localizedMessage?.contains("timeout", ignoreCase = true) == true) {
-                    "Немає зв'язку з сервером (таймаут). Перевірте інтернет."
+                    "No server connection (timeout). Check your internet."
                 } else {
-                    "Помилка з'єднання. Спробуйте пізніше."
+                    "Connection error. Please try again."
                 }
                 _profileState.value = ProfileState.Error(errorMsg)
             }
@@ -73,7 +73,7 @@ class ProfileViewModel(private val tokenManager: TokenManager) : ViewModel() {
                 }
                 logout(onLogoutComplete)
             } catch (e: Exception) {
-                _profileState.value = ProfileState.Error("Не вдалося видалити акаунт. Перевірте з'єднання з інтернетом.")
+                _profileState.value = ProfileState.Error("Failed to delete account. Check your internet connection.")
             }
         }
     }
