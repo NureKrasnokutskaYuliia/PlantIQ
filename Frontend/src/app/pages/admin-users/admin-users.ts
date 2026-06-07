@@ -26,7 +26,7 @@ export class AdminUsers implements OnInit {
     name: '',
     email: '',
     password: '',
-    role: 0
+    role: 'Owner' as 'Owner' | 'Admin'
   };
 
   ngOnInit() { this.load(); }
@@ -64,14 +64,21 @@ export class AdminUsers implements OnInit {
   }
 
   promote(id: number, name: string) {
-    if (!confirm(this.translate.instant('ADMIN.PROMOTE_CONFIRM') + ` (${name})`)) return;
+    if (!confirm(`Призначити адміністратором: ${name}?`)) return;
     const u = this.users().find(user => user.userId === id);
     if (!u) return;
-    
-    const dto = { name: u.name, email: u.email, role: 1, isActive: u.isActive };
-    
-    this.admin.updateUserRole(id, dto).subscribe({
+    this.admin.updateUserRole(id, { name: u.name, email: u.email, role: 'Admin', isActive: u.isActive }).subscribe({
       next: () => { this.success.set('ADMIN.SUCCESS_PROMOTE'); this.load(); },
+      error: () => this.error.set('COMMON.ERRORS.GENERAL')
+    });
+  }
+
+  demote(id: number, name: string) {
+    if (!confirm(`Зняти права адміністратора: ${name}?`)) return;
+    const u = this.users().find(user => user.userId === id);
+    if (!u) return;
+    this.admin.updateUserRole(id, { name: u.name, email: u.email, role: 'Owner', isActive: u.isActive }).subscribe({
+      next: () => { this.success.set('ADMIN.SUCCESS_DEMOTE'); this.load(); },
       error: () => this.error.set('COMMON.ERRORS.GENERAL')
     });
   }
@@ -81,12 +88,11 @@ export class AdminUsers implements OnInit {
       this.error.set('COMMON.ERRORS.REQUIRED_FIELDS');
       return;
     }
-    
     this.admin.createUser(this.newUser).subscribe({
       next: () => {
         this.success.set('ADMIN.SUCCESS_CREATE');
         this.showCreateForm.set(false);
-        this.newUser = { name: '', email: '', password: '', role: 0 };
+        this.newUser = { name: '', email: '', password: '', role: 'Owner' };
         this.load();
       },
       error: (err) => {
@@ -95,7 +101,10 @@ export class AdminUsers implements OnInit {
     });
   }
 
-  getRoleName(role: number) {
-    return role === 1 ? '👑 Адмін' : '👤 Користувач';
+  getRoleName(role: string) {
+    return role === 'Admin' ? '👑 Адмін' : '👤 Користувач';
   }
+
+  get userCount()  { return this.users().filter(u => u.role === 'Owner').length; }
+  get adminCount() { return this.users().filter(u => u.role === 'Admin').length; }
 }

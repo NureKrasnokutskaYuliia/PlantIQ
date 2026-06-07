@@ -170,6 +170,10 @@ h1, h2, h3, h4, h5, h6 {
 .dark-theme .btn.unban:hover { background: rgba(74, 222, 128, 0.2)  !important; }
 .dark-theme .btn.delete       { background: rgba(239, 68, 68, 0.12) !important;  color: #fca5a5 !important; }
 .dark-theme .btn.delete:hover { background: rgba(239, 68, 68, 0.2)  !important; }
+.dark-theme .btn.promote       { background: rgba(251, 191, 36, 0.1)  !important;  color: #fde68a !important; }
+.dark-theme .btn.promote:hover { background: rgba(251, 191, 36, 0.18) !important; }
+.dark-theme .btn.demote        { background: rgba(148, 163, 184, 0.1) !important;  color: #94a3b8 !important; }
+.dark-theme .btn.demote:hover  { background: rgba(148, 163, 184, 0.18)!important; }
 
 /* admin-users: modal and secondary button */
 .dark-theme .modal                  { background: var(--card-bg) !important; }

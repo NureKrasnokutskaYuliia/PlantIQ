@@ -14,7 +14,7 @@ export interface UserResponse {
   userId: number;
   name: string;
   email: string;
-  role: number;
+  role: 'Owner' | 'Admin';
   createdAt: string;
   isActive: boolean;
   lastLogin: string | null;

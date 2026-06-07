@@ -160,6 +160,24 @@ tr.banned td {
             background: #fee2e2;
         }
     }
+
+    &.promote {
+        background: #fef9c3;
+        color: #b45309;
+
+        &:hover {
+            background: #fde68a;
+        }
+    }
+
+    &.demote {
+        background: #f1f5f9;
+        color: #64748b;
+
+        &:hover {
+            background: #e2e8f0;
+        }
+    }
 }
 
 .total {

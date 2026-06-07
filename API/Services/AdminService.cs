@@ -22,39 +22,16 @@ namespace API.Services
 
         public async Task<API.DTOs.SystemStatisticsDto> GetSystemStatisticsAsync()
         {
-            await CleanupAdminDataInternalAsync();
-
             return new API.DTOs.SystemStatisticsDto
             {
-                TotalUsers = await _context.Users.CountAsync(),
+                TotalUsers = await _context.Users.CountAsync(u => u.Role == UserRole.Owner),
+                TotalAdmins = await _context.Users.CountAsync(u => u.Role == UserRole.Admin),
                 TotalDevices = await _context.Devices.CountAsync(),
                 TotalPlants = await _context.Plants.CountAsync(),
                 CriticalAlertsLast24h = await _context.Notifications
                     .CountAsync(n => n.Priority == NotificationPriority.Critical && n.Timestamp > DateTime.UtcNow.AddDays(-1)),
                 DatabaseSizeMb = 0
             };
-        }
-
-        private async Task CleanupAdminDataInternalAsync()
-        {
-            var admins = await _context.Users.Where(u => u.Role == UserRole.Admin).ToListAsync();
-            foreach (var admin in admins)
-            {
-                var adminPlants = await _context.Plants.Where(p => p.UserId == admin.UserId).ToListAsync();
-                if (adminPlants.Any())
-                {
-                    _context.Plants.RemoveRange(adminPlants);
-                    _logger.LogInformation("Cleanup: Removed {Count} plants from Admin ID {Id}", adminPlants.Count, admin.UserId);
-                }
-
-                var adminDevices = await _context.Devices.Where(d => d.UserId == admin.UserId).ToListAsync();
-                if (adminDevices.Any())
-                {
-                    _context.Devices.RemoveRange(adminDevices);
-                    _logger.LogInformation("Cleanup: Removed {Count} devices from Admin ID {Id}", adminDevices.Count, admin.UserId);
-                }
-            }
-            await _context.SaveChangesAsync();
         }
 
         public async Task BanUserAsync(int userId)

@@ -1,7 +1,7 @@
 export interface SystemStats {
   totalUsers: number;
-  activeUsers: number;
+  totalAdmins: number;
   totalPlants: number;
   totalDevices: number;
-  onlineDevices: number;
+  criticalAlertsLast24h: number;
 }

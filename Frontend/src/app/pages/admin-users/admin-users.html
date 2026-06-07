@@ -28,8 +28,8 @@
         <div class="form-group">
           <label>{{ 'PROFILE.ROLE' | translate }}</label>
           <select [(ngModel)]="newUser.role">
-            <option [ngValue]="0">👤 Користувач</option>
-            <option [ngValue]="1">👑 Адмін</option>
+            <option value="Owner">👤 Користувач</option>
+            <option value="Admin">👑 Адмін</option>
           </select>
         </div>
         <div class="modal-actions">
@@ -79,8 +79,11 @@
             } @else {
             <button class="btn unban" (click)="unban(u.userId, u.name)" title="Unban">✅</button>
             }
-            @if (u.role === 0) {
+            @if (u.role === 'Owner') {
               <button class="btn promote" (click)="promote(u.userId, u.name)" title="Make Admin">👑</button>
+            }
+            @if (u.role === 'Admin') {
+              <button class="btn demote" (click)="demote(u.userId, u.name)" title="Remove Admin">👇</button>
             }
             <button class="btn delete" (click)="delete(u.userId, u.name)" title="Delete">🗑️</button>
           </td>
@@ -89,6 +92,10 @@
       </tbody>
     </table>
   </div>
-  <div class="total">Всього: <strong>{{ users().length }}</strong> користувачів</div>
+  <div class="total">
+    Всього: <strong>{{ users().length }}</strong> —
+    👤 Користувачів: <strong>{{ userCount }}</strong> |
+    👑 Адмінів: <strong>{{ adminCount }}</strong>
+  </div>
   }
 </div>
