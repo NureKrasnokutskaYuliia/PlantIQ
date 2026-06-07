@@ -14,13 +14,11 @@ import { UserResponse } from '../../core/models/auth.model';
 export class AdminExport implements OnInit {
   private admin = inject(AdminService);
   users = signal<UserResponse[]>([]);
-  settings = signal<any[]>([]);
   stats = signal<any>(null);
   isExporting = signal(false);
 
   ngOnInit() {
     this.admin.getAllUsers().subscribe({ next: (u) => this.users.set(u) });
-    this.admin.getSettings().subscribe({ next: (s) => this.settings.set(s) });
     this.admin.getStats().subscribe({ next: (s) => this.stats.set(s) });
   }
 
@@ -29,8 +27,7 @@ export class AdminExport implements OnInit {
     const data = {
       exportedAt: new Date().toISOString(),
       stats: this.stats(),
-      users: this.users(),
-      settings: this.settings()
+      users: this.users()
     };
     this.download(JSON.stringify(data, null, 2), `plantiq-backup-${this.dateStr()}.json`, 'application/json');
     setTimeout(() => this.isExporting.set(false), 500);
@@ -45,15 +42,8 @@ export class AdminExport implements OnInit {
       u.lastLogin ?? '—',
       u.createdAt
     ]));
-    const csv = '\uFEFF' + rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const csv = '﻿' + rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
     this.download(csv, `plantiq-users-${this.dateStr()}.csv`, 'text/csv;charset=utf-8;');
-  }
-
-  exportSettingsCsv() {
-    const rows = [['Ключ', 'Значення']];
-    this.settings().forEach(s => rows.push([s.key, s.value ?? '']));
-    const csv = '\uFEFF' + rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-    this.download(csv, `plantiq-settings-${this.dateStr()}.csv`, 'text/csv;charset=utf-8;');
   }
 
   private download(content: string, filename: string, type: string) {
