@@ -1,5 +1,14 @@
 export type WateringMode = 'Manual' | 'Automatic' | 'Scheduled';
 
+export interface PlantSpecies {
+  speciesId: number;
+  name: string;
+  defaultMoistureMin?: number;
+  defaultMoistureMax?: number;
+  defaultLightMin?: number;
+  defaultLightMax?: number;
+}
+
 export interface Plant {
   plantId: number;
   userId: number;

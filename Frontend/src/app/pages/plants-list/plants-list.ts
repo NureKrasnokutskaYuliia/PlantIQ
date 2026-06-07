@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { PlantService } from '../../core/services/plant.service';
-import { Plant, CreatePlantDto, WateringMode } from '../../core/models/plant.model';
+import { Plant, CreatePlantDto, WateringMode, PlantSpecies } from '../../core/models/plant.model';
 import { DeviceService } from '../../core/services/device.service';
 import { Device } from '../../core/models/device.model';
 import { SensorService } from '../../core/services/sensor.service';
@@ -24,6 +24,7 @@ export class PlantsList implements OnInit {
 
   plants = signal<Plant[]>([]);
   devices = signal<Device[]>([]);
+  species = signal<PlantSpecies[]>([]);
   sensorMap = signal<Record<number, SensorData>>({});
   isLoading = signal(true);
   error = signal('');
@@ -75,6 +76,10 @@ export class PlantsList implements OnInit {
     this.deviceService.getMyDevices().subscribe({
       next: (d) => this.devices.set(d)
     });
+
+    this.plantService.getSpecies().subscribe({
+      next: (s) => this.species.set(s)
+    });
   }
 
   addPlant() {
@@ -122,6 +127,15 @@ export class PlantsList implements OnInit {
       next: () => { this.editingPlant.set(null); this.loadAll(); },
       error: () => this.error.set('COMMON.ERRORS.GENERAL')
     });
+  }
+
+  applySpeciesDefaults(speciesName: string, target: any) {
+    const s = this.species().find(sp => sp.name === speciesName);
+    if (!s) return;
+    if (s.defaultMoistureMin) target.optimalMoistureMin = s.defaultMoistureMin;
+    if (s.defaultMoistureMax) target.optimalMoistureMax = s.defaultMoistureMax;
+    if (s.defaultLightMin)    target.optimalLightMin    = s.defaultLightMin;
+    if (s.defaultLightMax)    target.optimalLightMax    = s.defaultLightMax;
   }
 
   getMoistureStatus(plant: Plant, sensor?: SensorData): 'ok' | 'low' | 'high' | 'unknown' {

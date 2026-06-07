@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService, API_BASE_URL } from './api.service';
 
-import { Plant, CreatePlantDto } from '../models/plant.model';
+import { Plant, CreatePlantDto, PlantSpecies } from '../models/plant.model';
 
 @Injectable({ providedIn: 'root' })
 export class PlantService extends ApiService {
@@ -20,5 +20,8 @@ export class PlantService extends ApiService {
   }
   deletePlant(id: number): Observable<void> {
     return this.http.delete<void>(`${API_BASE_URL}/Plants/${id}`, { headers: this.headers });
+  }
+  getSpecies(): Observable<PlantSpecies[]> {
+    return this.http.get<PlantSpecies[]>(`${API_BASE_URL}/PlantSpecies`, { headers: this.headers });
   }
 }

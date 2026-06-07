@@ -19,7 +19,14 @@
       </div>
       <div class="form-group">
         <label>{{ 'PLANTS.SPECIES' | translate }}</label>
-        <input [(ngModel)]="newPlant.species" placeholder="Monstera deliciosa">
+        <input list="species-list-add" [(ngModel)]="newPlant.species"
+               (change)="applySpeciesDefaults(newPlant.species ?? '', newPlant)"
+               placeholder="Monstera deliciosa">
+        <datalist id="species-list-add">
+          @for (s of species(); track s.speciesId) {
+            <option [value]="s.name">
+          }
+        </datalist>
       </div>
       <div class="form-group">
         <label>{{ 'PLANTS.DEVICE' | translate }}</label>
@@ -143,7 +150,14 @@
         </div>
         <div class="form-group">
           <label>Вид</label>
-          <input [(ngModel)]="editForm.species">
+          <input list="species-list-edit" [(ngModel)]="editForm.species"
+                 (change)="applySpeciesDefaults(editForm.species, editForm)"
+                 placeholder="Monstera deliciosa">
+          <datalist id="species-list-edit">
+            @for (s of species(); track s.speciesId) {
+              <option [value]="s.name">
+            }
+          </datalist>
         </div>
         <div class="form-group">
           <label>Пристрій</label>
