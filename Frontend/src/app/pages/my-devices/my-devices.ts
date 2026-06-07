@@ -34,7 +34,7 @@ export class MyDevices implements OnInit {
 
   load() {
     this.isLoading.set(true);
-    const userId = Number(localStorage.getItem('userId'));
+    const userId = Number(sessionStorage.getItem('userId'));
     forkJoin({
       devices: this.deviceService.getMyDevices(),
       plants: this.plantService.getMyPlants()

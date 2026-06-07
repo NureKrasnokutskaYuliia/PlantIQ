@@ -17,7 +17,7 @@ export class AdminLayout {
   private router = inject(Router);
 
   get userName(): string {
-    return localStorage.getItem('userName') ?? 'Admin';
+    return sessionStorage.getItem('userName') ?? 'Admin';
   }
 
   logout() {

@@ -17,7 +17,7 @@ export class UserLayout {
   private router = inject(Router);
 
   get userName(): string {
-    return localStorage.getItem('userName') ?? 'Профіль';
+    return sessionStorage.getItem('userName') ?? 'Профіль';
   }
   
   get isAdmin(): boolean {

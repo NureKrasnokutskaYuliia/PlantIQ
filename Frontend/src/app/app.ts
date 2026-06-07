@@ -20,7 +20,7 @@ export class App implements OnInit {
   ngOnInit() {
     if (!this.auth.isLoggedIn()) return;
 
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('userId');
     const token = this.auth.getToken();
     if (!userId || !token) return;
 
@@ -29,10 +29,10 @@ export class App implements OnInit {
       .subscribe({
         next: (user) => {
           const actualRole = user.role === 'Admin' ? 'admin' : 'user';
-          const storedRole = localStorage.getItem('role');
+          const storedRole = sessionStorage.getItem('role');
           if (storedRole === actualRole) return;
 
-          localStorage.setItem('role', actualRole);
+          sessionStorage.setItem('role', actualRole);
           const currentUrl = this.router.url;
           if (actualRole === 'user' && currentUrl.startsWith('/admin')) {
             this.router.navigate(['/user/dashboard']);

@@ -29,7 +29,7 @@ export class AuthService {
     this.checkInterval = setInterval(() => {
       if (!this.isLoggedIn()) return;
 
-      const expiresStr = localStorage.getItem('sessionExpires');
+      const expiresStr = sessionStorage.getItem('sessionExpires');
       if (expiresStr) {
         const expires = parseInt(expiresStr, 10);
         const remaining = expires - Date.now();
@@ -43,12 +43,12 @@ export class AuthService {
           this.showSessionWarning.set(false);
         }
       }
-    }, 5000); // Перевіряємо кожні 5 секунд
+    }, 5000);
   }
 
   extendSession() {
     const expiresAt = Date.now() + SESSION_TIMEOUT_MINUTES * 60 * 1000;
-    localStorage.setItem('sessionExpires', expiresAt.toString());
+    sessionStorage.setItem('sessionExpires', expiresAt.toString());
     this.showSessionWarning.set(false);
   }
 
@@ -104,28 +104,26 @@ export class AuthService {
 
   saveSession(resp: LoginResponse) {
     const expiresAt = Date.now() + SESSION_TIMEOUT_MINUTES * 60 * 1000;
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('token', resp.token);
-
-    localStorage.setItem('role', resp.user.role === 'Admin' ? 'admin' : 'user');
-
-    localStorage.setItem('userName', resp.user.name);
-    localStorage.setItem('userId', String(resp.user.userId));
-    localStorage.setItem('sessionExpires', expiresAt.toString());
+    sessionStorage.setItem('isLoggedIn', 'true');
+    sessionStorage.setItem('token', resp.token);
+    sessionStorage.setItem('role', resp.user.role === 'Admin' ? 'admin' : 'user');
+    sessionStorage.setItem('userName', resp.user.name);
+    sessionStorage.setItem('userId', String(resp.user.userId));
+    sessionStorage.setItem('sessionExpires', expiresAt.toString());
     this.showSessionWarning.set(false);
   }
 
   logout() {
-    localStorage.clear();
+    sessionStorage.clear();
     this.showSessionWarning.set(false);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return sessionStorage.getItem('token');
   }
 
   isLoggedIn(): boolean {
-    const expiresStr = localStorage.getItem('sessionExpires');
+    const expiresStr = sessionStorage.getItem('sessionExpires');
     if (expiresStr) {
       const expires = parseInt(expiresStr, 10);
       if (Date.now() > expires) {
@@ -133,11 +131,11 @@ export class AuthService {
         return false;
       }
     }
-    return localStorage.getItem('isLoggedIn') === 'true';
+    return sessionStorage.getItem('isLoggedIn') === 'true';
   }
 
   isAdmin(): boolean {
-    const role = localStorage.getItem('role');
-    return role === 'admin' || role === '1';
+    const role = sessionStorage.getItem('role');
+    return role === 'admin';
   }
 }

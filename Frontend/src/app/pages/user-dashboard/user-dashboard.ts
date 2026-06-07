@@ -12,6 +12,6 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class UserDashboard {
   get userName() {
-    return localStorage.getItem('userName') || '';
+    return sessionStorage.getItem('userName') || '';
   }
 }

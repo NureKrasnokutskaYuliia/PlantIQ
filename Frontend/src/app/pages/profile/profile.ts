@@ -45,7 +45,7 @@ export class Profile extends ApiService implements OnInit {
   isLocalhost = signal(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
   ngOnInit() {
-    const id = Number(localStorage.getItem('userId'));
+    const id = Number(sessionStorage.getItem('userId'));
     if (!id) { this.error.set('COMMON.ERRORS.USER_NOT_FOUND'); this.isLoading.set(false); return; }
     this.userId = id;
 
@@ -61,7 +61,7 @@ export class Profile extends ApiService implements OnInit {
       },
       error: () => {
         // Fallback to localStorage if API fails
-        this.name = localStorage.getItem('userName') ?? '';
+        this.name = sessionStorage.getItem('userName') ?? '';
         this.email = '';
         this.isLoading.set(false);
         this.error.set('COMMON.ERRORS.LOAD_FAILED');
@@ -90,7 +90,7 @@ export class Profile extends ApiService implements OnInit {
         this.isSaving.set(false);
         this.success.set('PROFILE.SAVE_SUCCESS');
         // Update localStorage
-        localStorage.setItem('userName', this.name);
+        sessionStorage.setItem('userName', this.name);
         localStorage.setItem('userTimezone', this.selectedTimezone);
       },
       error: (err) => {
