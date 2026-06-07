@@ -32,6 +32,8 @@
     "SUCCESS_UNBAN": "User has been unbanned",
     "SUCCESS_DELETE": "User has been deleted",
     "SUCCESS_PROMOTE": "Admin privileges granted",
+    "SUCCESS_DEMOTE": "Admin privileges revoked",
+    "DEMOTE_CONFIRM": "Remove admin privileges?",
     "NOTIF_TITLE": "Notifications",
     "NOTIF_SUB": "Send notification to all users",
     "NOTIF_LABEL_TITLE": "Title",

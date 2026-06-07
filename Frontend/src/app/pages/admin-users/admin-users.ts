@@ -64,7 +64,7 @@ export class AdminUsers implements OnInit {
   }
 
   promote(id: number, name: string) {
-    if (!confirm(`Призначити адміністратором: ${name}?`)) return;
+    if (!confirm(this.translate.instant('ADMIN.PROMOTE_CONFIRM') + ` (${name})`)) return;
     const u = this.users().find(user => user.userId === id);
     if (!u) return;
     this.admin.updateUserRole(id, { name: u.name, email: u.email, role: 'Admin', isActive: u.isActive }).subscribe({
@@ -74,7 +74,7 @@ export class AdminUsers implements OnInit {
   }
 
   demote(id: number, name: string) {
-    if (!confirm(`Зняти права адміністратора: ${name}?`)) return;
+    if (!confirm(this.translate.instant('ADMIN.DEMOTE_CONFIRM') + ` (${name})`)) return;
     const u = this.users().find(user => user.userId === id);
     if (!u) return;
     this.admin.updateUserRole(id, { name: u.name, email: u.email, role: 'Owner', isActive: u.isActive }).subscribe({
