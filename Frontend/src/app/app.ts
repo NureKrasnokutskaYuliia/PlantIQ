@@ -25,9 +25,14 @@ export class App implements OnInit {
     if (!userId || !token) return;
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    this.http.get<{ role: 'Owner' | 'Admin' }>(`${API_BASE_URL}/Users/${userId}`, { headers })
+    this.http.get<{ role: 'Owner' | 'Admin'; isActive: boolean }>(`${API_BASE_URL}/Users/${userId}`, { headers })
       .subscribe({
         next: (user) => {
+          if (!user.isActive) {
+            this.auth.logout();
+            this.router.navigate(['/login']);
+            return;
+          }
           const actualRole = user.role === 'Admin' ? 'admin' : 'user';
           const storedRole = sessionStorage.getItem('role');
           if (storedRole === actualRole) return;
