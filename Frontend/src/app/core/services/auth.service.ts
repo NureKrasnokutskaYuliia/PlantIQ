@@ -107,9 +107,7 @@ export class AuthService {
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('token', resp.token);
 
-    // ГНУЧКА ПЕРЕВІРКА РОЛІ (число 1 або рядок "Admin")
-    const isActuallyAdmin = resp.user.role === 1 || String(resp.user.role).toLowerCase() === 'admin';
-    localStorage.setItem('role', isActuallyAdmin ? 'admin' : 'user');
+    localStorage.setItem('role', resp.user.role === 'Admin' ? 'admin' : 'user');
 
     localStorage.setItem('userName', resp.user.name);
     localStorage.setItem('userId', String(resp.user.userId));

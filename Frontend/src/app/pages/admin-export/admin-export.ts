@@ -40,7 +40,7 @@ export class AdminExport implements OnInit {
     const rows = [['ID', 'Ім\'я', 'Email', 'Роль', 'Активний', 'Останній вхід', 'Дата реєстрації']];
     this.users().forEach(u => rows.push([
       String(u.userId), u.name, u.email,
-      u.role === 1 ? 'Адмін' : 'Користувач',
+      u.role === 'Admin' ? 'Адмін' : 'Користувач',
       u.isActive ? 'Так' : 'Ні',
       u.lastLogin ?? '—',
       u.createdAt

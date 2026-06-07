@@ -9,7 +9,7 @@ interface UserProfile {
   userId: number;
   name: string;
   email: string;
-  role: number;
+  role: 'Owner' | 'Admin';
   createdAt: string;
   isActive: boolean;
 }
@@ -35,7 +35,7 @@ export class Profile extends ApiService implements OnInit {
 
   // Read-only info
   userId = 0;
-  role = 0;
+  role: 'Owner' | 'Admin' = 'Owner';
   createdAt = '';
   isActive = true;
   selectedTimezone = 'UTC+2 (Kyiv)';
@@ -105,7 +105,7 @@ export class Profile extends ApiService implements OnInit {
   }
 
   getRoleKey(): string {
-    return this.role === 1 ? 'PROFILE.ROLE_ADMIN' : 'PROFILE.ROLE_USER';
+    return this.role === 'Admin' ? 'PROFILE.ROLE_ADMIN' : 'PROFILE.ROLE_USER';
   }
 
   deleteAccount() {
