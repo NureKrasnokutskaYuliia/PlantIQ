@@ -134,6 +134,42 @@ namespace API.Controllers
             return NoContent();
         }
 
+        [HttpPost("{id}/ban")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> BanUser(int id)
+        {
+            if (!await IsCallerAdminAsync()) return Forbid();
+            var user = await _userService.GetByIdAsync(id);
+            if (user == null) return NotFound();
+            user.IsActive = false;
+            await _userService.UpdateUserAsync(user);
+            return NoContent();
+        }
+
+        [HttpPost("{id}/unban")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UnbanUser(int id)
+        {
+            if (!await IsCallerAdminAsync()) return Forbid();
+            var user = await _userService.GetByIdAsync(id);
+            if (user == null) return NotFound();
+            user.IsActive = true;
+            await _userService.UpdateUserAsync(user);
+            return NoContent();
+        }
+
+        private async Task<bool> IsCallerAdminAsync()
+        {
+            var idStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(idStr, out int callerId)) return false;
+            var caller = await _userService.GetByIdAsync(callerId);
+            return caller?.Role == UserRole.Admin;
+        }
+
         /// <summary>
         /// Authenticate a user (Login) and return JWT Token.
         /// </summary>

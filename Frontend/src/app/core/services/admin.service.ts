@@ -16,10 +16,10 @@ export class AdminService extends ApiService {
     return this.http.post<UserResponse>(`${API_BASE_URL}/Users`, dto, { headers: this.headers });
   }
   banUser(id: number): Observable<void> {
-    return this.http.post<void>(`${API_BASE_URL}/Admin/users/${id}/ban`, {}, { headers: this.headers });
+    return this.http.post<void>(`${API_BASE_URL}/Users/${id}/ban`, {}, { headers: this.headers });
   }
   unbanUser(id: number): Observable<void> {
-    return this.http.post<void>(`${API_BASE_URL}/Admin/users/${id}/unban`, {}, { headers: this.headers });
+    return this.http.post<void>(`${API_BASE_URL}/Users/${id}/unban`, {}, { headers: this.headers });
   }
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${API_BASE_URL}/Users/${id}`, { headers: this.headers });
