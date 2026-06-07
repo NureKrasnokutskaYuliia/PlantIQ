@@ -27,10 +27,10 @@ namespace API.Controllers
         /// <returns>A list of users</returns>
         /// <response code="200">Successfully returned the list</response>
         [HttpGet]
-        [Authorize(Roles = "admin")]
         [ProducesResponseType(typeof(IEnumerable<UserResponseDto>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<UserResponseDto>>> GetUsers()
         {
+            if (!await IsCallerAdminAsync()) return Forbid();
             var users = await _userService.GetAllAsync();
             var userDtos = users.Select(u => MapToResponseDto(u));
             return Ok(userDtos);

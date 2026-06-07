@@ -1,5 +1,6 @@
 using API.Services.Interfaces;
 using API.DTOs;
+using API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,15 +8,25 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "admin")]
+    [Authorize]
     [Produces("application/json")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
+        private readonly IUserService _userService;
 
-        public AdminController(IAdminService adminService)
+        public AdminController(IAdminService adminService, IUserService userService)
         {
             _adminService = adminService;
+            _userService = userService;
+        }
+
+        private async Task<bool> IsCallerAdminAsync()
+        {
+            var idStr = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(idStr, out int callerId)) return false;
+            var caller = await _userService.GetByIdAsync(callerId);
+            return caller?.Role == UserRole.Admin;
         }
 
         /// <summary>
@@ -30,6 +41,7 @@ namespace API.Controllers
         [ProducesResponseType(typeof(SystemStatisticsDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<SystemStatisticsDto>> GetStats()
         {
+            if (!await IsCallerAdminAsync()) return Forbid();
             var stats = await _adminService.GetSystemStatisticsAsync();
             return Ok(stats);
         }
@@ -81,6 +93,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> SendGlobalNotification([FromBody] GlobalNotificationRequest request)
         {
+            if (!await IsCallerAdminAsync()) return Forbid();
             if (string.IsNullOrWhiteSpace(request.Message))
             {
                 return BadRequest("Message cannot be empty.");
