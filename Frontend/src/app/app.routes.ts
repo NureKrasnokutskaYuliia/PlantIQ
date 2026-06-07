@@ -6,7 +6,6 @@ import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
 import { AdminUsers } from './pages/admin-users/admin-users';
 import { AdminData } from './pages/admin-data/admin-data';
 import { AdminNotifications } from './pages/admin-notifications/admin-notifications';
-import { AdminSettings } from './pages/admin-settings/admin-settings';
 import { AdminExport } from './pages/admin-export/admin-export';
 
 import { UserDashboard } from './pages/user-dashboard/user-dashboard';
@@ -35,7 +34,6 @@ export const routes: Routes = [
       { path: 'users', component: AdminUsers },
       { path: 'data', component: AdminData },
       { path: 'notifications', component: AdminNotifications },
-      { path: 'settings', component: AdminSettings },
       { path: 'export', component: AdminExport },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
