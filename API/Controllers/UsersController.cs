@@ -13,10 +13,12 @@ namespace API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IAdminService _adminService;
 
-        public UsersController(IUserService userService)
+        public UsersController(IUserService userService, IAdminService adminService)
         {
             _userService = userService;
+            _adminService = adminService;
         }
 
         /// <summary>
@@ -137,28 +139,20 @@ namespace API.Controllers
         [HttpPost("{id}/ban")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> BanUser(int id)
         {
             if (!await IsCallerAdminAsync()) return Forbid();
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null) return NotFound();
-            user.IsActive = false;
-            await _userService.UpdateUserAsync(user);
+            await _adminService.BanUserAsync(id);
             return NoContent();
         }
 
         [HttpPost("{id}/unban")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UnbanUser(int id)
         {
             if (!await IsCallerAdminAsync()) return Forbid();
-            var user = await _userService.GetByIdAsync(id);
-            if (user == null) return NotFound();
-            user.IsActive = true;
-            await _userService.UpdateUserAsync(user);
+            await _adminService.UnbanUserAsync(id);
             return NoContent();
         }
 
