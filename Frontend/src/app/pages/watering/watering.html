@@ -29,6 +29,9 @@
             <option [ngValue]="'Automatic'">{{ 'WATERING.MODE_SENSORS' | translate }}</option>
             <option [ngValue]="'Scheduled'">{{ 'WATERING.MODE_SCHED' | translate }}</option>
           </select>
+          <button class="btn-water-now" (click)="$event.stopPropagation(); waterNow(idx)" [disabled]="wateringPlantIdx() === idx">
+            {{ wateringPlantIdx() === idx ? '⏳' : '💧' }} Полити зараз
+          </button>
           <span class="badge blue">{{ entry.events.length }} {{ 'WATERING.EVENTS_COUNT' | translate }}</span>
           <span class="badge green">{{ totalWatered(entry.events) }} {{ 'WATERING.TOTAL_WATERED' | translate }}</span>
           <span class="chevron">{{ entry.expanded ? '▲' : '▼' }}</span>
@@ -56,6 +59,9 @@
                   <div class="schedule-meta">
                     <span>💧 {{ s.amountMl }} мл</span>
                     <span>🔁 Кожні {{ s.intervalHours }}г</span>
+                    @if (s.repeatCount > 1) {
+                      <span>🔢 {{ s.repeatCount }} разів</span>
+                    }
                     @if ((s.daysOfWeek?.length ?? 0) > 0) {
                       <span>📆 {{ s.daysOfWeek.map(d => DAYS[d]).join(', ') }}</span>
                     }
@@ -117,6 +123,20 @@
         <div class="form-group">
           <label>{{ 'WATERING.AMOUNT' | translate }}</label>
           <input type="number" [(ngModel)]="newSchedule.amountMl" step="10">
+        </div>
+        <div class="form-group">
+          <label>Кількість повторень</label>
+          <input type="number" [(ngModel)]="newSchedule.repeatCount" min="1">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Дні тижня</label>
+        <div class="days-picker">
+          @for (day of DAYS; track $index) {
+            <button type="button" class="day-btn" [class.active]="hasDay($index)" (click)="toggleDay($index)">
+              {{ day }}
+            </button>
+          }
         </div>
       </div>
       <div class="modal-actions">

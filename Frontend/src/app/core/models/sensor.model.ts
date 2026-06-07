@@ -30,4 +30,5 @@ export interface WateringSchedule {
   amountMl: number;
   enabled: boolean;
   daysOfWeek: number[];
+  repeatCount: number;
 }

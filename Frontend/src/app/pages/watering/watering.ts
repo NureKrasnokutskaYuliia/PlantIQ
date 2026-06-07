@@ -30,7 +30,8 @@ export class Watering implements OnInit {
   error = signal('');
   
   showScheduleForm = signal<{plantId: number, idx: number} | null>(null);
-  newSchedule: any = { startTime: '08:00', intervalHours: 24, amountMl: 100, enabled: true, daysOfWeek: [1,2,3,4,5,6,0] };
+  newSchedule: any = { startTime: '08:00', intervalHours: 24, amountMl: 100, repeatCount: 1, enabled: true, daysOfWeek: [] };
+  wateringPlantIdx = signal<number | null>(null);
 
   readonly MODE_LABELS: Record<string, string> = {
     'Manual': '🤲 Ручний',
@@ -111,9 +112,39 @@ export class Watering implements OnInit {
     });
   }
 
+  toggleDay(day: number) {
+    const days: number[] = [...this.newSchedule.daysOfWeek];
+    const i = days.indexOf(day);
+    if (i === -1) days.push(day); else days.splice(i, 1);
+    this.newSchedule = { ...this.newSchedule, daysOfWeek: days };
+  }
+
+  hasDay(day: number): boolean {
+    return this.newSchedule.daysOfWeek.includes(day);
+  }
+
   openScheduleForm(plantId: number, idx: number) {
     this.showScheduleForm.set({plantId, idx});
-    this.newSchedule = { startTime: '08:00', intervalHours: 24, amountMl: 100, enabled: true, daysOfWeek: [1,2,3,4,5,6,0] };
+    this.newSchedule = { startTime: '08:00', intervalHours: 24, amountMl: 100, repeatCount: 1, enabled: true, daysOfWeek: [] };
+  }
+
+  waterNow(idx: number) {
+    const entry = this.plantData()[idx];
+    this.wateringPlantIdx.set(idx);
+    this.wateringSvc.createEvent({
+      plantId: entry.plant.plantId,
+      amountMl: 200,
+      mode: 'Manual',
+      status: 'Completed'
+    }).subscribe({
+      next: (ev) => {
+        const updated = [...this.plantData()];
+        updated[idx] = { ...updated[idx], events: [ev, ...updated[idx].events] };
+        this.plantData.set(updated);
+        this.wateringPlantIdx.set(null);
+      },
+      error: () => { this.wateringPlantIdx.set(null); this.error.set('COMMON.ERRORS.GENERAL'); }
+    });
   }
 
   closeScheduleForm() { this.showScheduleForm.set(null); }

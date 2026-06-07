@@ -27,9 +27,13 @@ namespace API.Controllers
         /// <response code="200">Successfully returned the list</response>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<DeviceResponseDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<IEnumerable<DeviceResponseDto>>> GetDevices()
         {
-            var devices = await _deviceService.GetAllAsync();
+            var userId = GetUserIdFromClaims();
+            if (userId == null) return Unauthorized();
+
+            var devices = await _deviceService.GetByUserIdAsync(userId.Value);
             var deviceDtos = devices.Select(d => MapToResponseDto(d));
             return Ok(deviceDtos);
         }

@@ -25,4 +25,7 @@ export class WateringService extends ApiService {
   deleteSchedule(id: number): Observable<void> {
     return this.http.delete<void>(`${API_BASE_URL}/WateringSchedules/${id}`, { headers: this.headers });
   }
+  createEvent(dto: { plantId: number; amountMl: number; mode: string; status: string }): Observable<WateringEvent> {
+    return this.http.post<WateringEvent>(`${API_BASE_URL}/WateringEvents`, dto, { headers: this.headers });
+  }
 }
